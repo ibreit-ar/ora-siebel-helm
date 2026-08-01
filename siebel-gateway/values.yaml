@@ -1,0 +1,173 @@
+# Default values for siebel.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  siebel:
+    registry: phx.ocir.io
+    repository: siebeldev/cm/siebel
+    tag: "26.6-full"
+    imagePullPolicy: IfNotPresent
+  busybox:
+    registry: phx.ocir.io
+    repository: siebeldev/cm/base-builder
+    tag: CM_26.3.0
+    imagePullPolicy: Always
+
+#Storage Information
+storage:
+  - storageClassName: oci-fss
+    nfsServer: dx4c-dev-mt.sub3f36566ba.dx4cdev.oraclevcn.com
+    nfsPath: /okepodspv/DEMO-CRM
+
+ca:
+  #ipAddress: 129.213.124.55
+  clusterDns: svc.cluster.local
+
+smc:
+  nodePort: 30156
+  # to add node/pod affinity
+  affinity: {}
+  # env variables to the smc pod can be overridden by defining the envlist like below:
+  envlist: {}
+  # envlist:
+  #   - name: SBL_HEAP_OPTS
+  #     value: "-Xms700m -Xmx7G"
+  serviceAccountName: smc-sa
+
+  # HPA for any metric can be defined as below:
+  # Note: The metric has to be defined in prometheus-adapter config map rules for using it in autoscaling.
+  # HPA for any metric can be defined as below:
+  # Note: The metric has to be defined in prometheus-adapter config map rules for using it in autoscaling.
+  # autoscaling:
+  #   behavior:
+  #     scaleDown:
+  #       policies:
+  #       - periodSeconds: 200
+  #         type: Percent
+  #         value: 100
+  #       selectPolicy: Disabled
+  #     scaleUp:
+  #       policies:
+  #       - periodSeconds: 900
+  #         type: Pods
+  #         value: 4
+  #       - periodSeconds: 900
+  #         type: Percent
+  #         value: 100
+  #       selectPolicy: Max
+  #       stabilizationWindowSeconds: 0
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   metrics:
+  #   - type: Pods
+  #     pods:
+  #       metric:
+  #         name: percentage_container_cpu_usage_smc
+  #       target:
+  #         averageValue: 70
+  #         type: AverageValue
+
+  
+
+cgw:
+  replicas: 3
+  # to add node/pod affinity
+  affinity: {}
+  # env variables to the cgw pod can be overridden by defining the envlist like below:
+  envlist: {}
+  # envlist:
+  #   - name: SBL_HEAP_OPTS
+  #     value: "-Xms700m -Xmx7G"
+  serviceAccountName: cgw-sa
+
+
+imagePullSecrets: #Add additional secrets as required if accessing multiple registries, create them prior to helm install
+  - ocirsecret
+  - customsecret
+
+cgwLivenessProbe:
+  exec:
+    command:
+    - bash
+    - /config/healthcheck
+  initialDelaySeconds: 120
+  periodSeconds: 10
+  failureThreshold: 3
+
+cgwReadinessProbe:
+  exec:
+    command:
+    - bash
+    - /config/healthcheck
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  failureThreshold: 16
+
+cgwResources:
+    limits:
+      cpu: "1"
+      memory: 3Gi
+    requests:
+      cpu: "0.5"
+      memory: 1Gi
+
+saiLivenessProbe:
+  exec:
+    command:
+    - bash
+    - /config/healthcheck
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  failureThreshold: 10
+
+saiReadinessProbe:
+  exec:
+    command:
+    - bash
+    - /config/healthcheck
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  failureThreshold: 16
+
+saiResources:
+    limits:
+      cpu: "1"
+      memory: 4Gi
+    requests:
+      cpu: "0.5"
+      memory: 500Mi
+
+# ldap ssl
+ldap:
+  enable_ssl: false
+
+# siebel logging related parameters
+logging:
+  enableLogging: false
+  image:
+    registry: phx.ocir.io
+    repository: siebeldev/cm/fluentd-collector
+    tag: v1.18.0.2
+    imagePullPolicy: Always
+  aggregatorInfo:
+    portNo: 24224
+    svcName: log-aggregator-svc
+  logCollectorResources:
+     limits:
+       cpu: 500m
+       memory: 1Gi
+     requests:
+       cpu: 250m
+       memory: 512Mi
+  securityContext:
+    runAsUser: 1000
+monitoring:
+  enableMonitoring: false
+
+securityContext:
+  runAsGroup: 1000
+  runAsUser: 1000
+  fsGroup: 1000
+
+namespaceEnvid: siebel-jwc4l7

@@ -1,0 +1,46 @@
+
+{{ $count := (.Values.cgw.replicas | int) }}
+{{ $root := . }}
+{{ $namespace := .Release.Namespace }}
+{{- range $i, $e := until $count }}
+
+#CGW support services for accessing pods directly
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: siebelcgw-{{ $i }}
+  namespace: {{ $namespace  }}
+  labels: {{- include "siebel.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: cgw-{{ $i }}
+spec:
+  ports:
+  - name: agent-port
+    port: 8888
+    protocol: TCP
+    targetPort: 8888
+  - name: tomcat-port
+    port: 4430
+    protocol: TCP
+    targetPort: 4430
+  - name: zkclient-port
+    port: 2320
+    protocol: TCP
+    targetPort: 2320
+  - name: leader-port
+    port: 2329
+    protocol: TCP
+    targetPort: 2329
+  - name: follower-port
+    port: 2328
+    protocol: TCP
+    targetPort: 2328
+  {{- if $root.Values.monitoring.enableMonitoring }}
+  - name: jmx-metrics
+    port: 8088
+    protocol: TCP
+    targetPort: 8088
+  {{- end }}
+  selector: 
+    statefulset.kubernetes.io/pod-name: siebelcgw-{{ $i }}
+{{- end }}

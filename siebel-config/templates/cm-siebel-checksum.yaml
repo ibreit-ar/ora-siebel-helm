@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Namespace | lower }}-siebel-checksum
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "siebel.labels" . | nindent 4 }}
+data:
+  {{- $files := .Files }}
+  {{- range $key, $value := .Files }}
+  {{- if hasPrefix "paramconfig/server_" $key }}
+  {{ $key | trimPrefix "paramconfig/" | trimSuffix ".yaml" | replace "_" "-" }}: {{ $files.Get $key | sha256sum | nindent 4 }}
+  {{- else if hasPrefix "paramconfig/sai_" $key }}
+  {{ $key | trimPrefix "paramconfig/" | trimSuffix ".yaml" | replace "_" "-" }}: {{ $files.Get $key | sha256sum | nindent 4 }}
+  {{- else if hasPrefix "paramconfig/" $key }}
+  {{ $key | trimPrefix "paramconfig/" | trimSuffix ".yaml" | replace "_" "-" }}: {{ $files.Get $key | sha256sum | nindent 4 }}
+  {{- end }}
+  {{- end }}

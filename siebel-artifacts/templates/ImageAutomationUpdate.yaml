@@ -1,0 +1,55 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: cm-siebel-image-update1
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "siebel.labels" . | nindent 4 }}
+spec:
+  interval: 1m0s
+  sourceRef:
+    kind: GitRepository
+    name: {{ .Values.git.flux_helm_repo_name | default "siebel-repo"  }}
+    namespace: {{ .Values.git.flux_helm_repo_namespace | default .Release.Namespace }}
+  git:
+    checkout:
+      ref:
+        branch: {{ .Values.git.git_helm_repo_branch }}
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+      messageTemplate: 'updated new image'
+    push:
+      branch: {{ .Values.git.git_helm_repo_branch }}
+  update:
+    path: ./siebel-artifacts
+    strategy: Setters
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: cm-siebel-image-update2
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "siebel.labels" . | nindent 4 }}
+spec:
+  interval: 1m0s
+  sourceRef:
+    kind: GitRepository
+    name: {{ .Values.git.flux_scm_repo_name | default .Release.Namespace }}
+    namespace: {{ .Values.git.flux_scm_repo_namespace | default .Release.Namespace }}
+  git:
+    checkout:
+      ref:
+        branch: {{ .Values.git.git_scm_repo_branch }}
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+      messageTemplate: 'updated new image'
+    push:
+      branch: {{ .Values.git.git_scm_repo_branch }}
+  update:
+    path: ./{{ .Values.git.git_scm_flux_folder }}/apps/base/siebel
+    strategy: Setters
+
+

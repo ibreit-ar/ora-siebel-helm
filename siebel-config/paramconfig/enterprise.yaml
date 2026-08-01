@@ -1,0 +1,84 @@
+enterprise:
+  EnterpriseDeployment:
+    enterprise_deployment_info:
+    - DeploymentInfo:
+        Action: Deploy
+        ProfileName: siebel_ent
+      EnterpriseDeployParams:
+        EnterpriseDesc: siebel_ent
+        SiebelEnterprise: siebel_ent
+  EnterpriseProfiles:
+    profiles:
+    - EnterpriseConfigParams:
+        ApplicationPassword: null
+        ApplicationUser: null
+        BaseDN: null
+        CACertFileName: null
+        CRC: null
+        ChartImageFormat: null
+        ChartServerHost: null
+        CredentialsAttributeType: null
+        DBConnectString: SIEBEL
+        DBUserPasswd: Sadmin22__Aa
+        DBUsername: SADMIN
+        DatabasePlatform: Oracle
+        Db2CurrentSQLID: null
+        Db2DatabaseAlias: null
+        Db2InstHome: null
+        Encrypt: SISNAPI
+        FQDNName: null
+        HashDBPwd: null
+        HashUserPwd: null
+        KeyFileName: null
+        KeyFilePassword: null
+        NameserverHostName: siebelcgw-0
+        NamesrvrPort: '8888'
+        Password: Sadmin22__Aa
+        PeerAuth: null
+        PeerCertValidation: null
+        Port: null
+        PortMode: null
+        PrimaryLanguage: enu
+        PropagateChange: false
+        PropagateGatewayAuthentication: true
+        RolesAttributeType: null
+        SaltUserPwd: null
+        SecAdptProfileName: Gateway
+        ServerFileSystem: /sfs0
+        SharedCredentialsDN: null
+        SingleSignOn: null
+        SqlDatabase: null
+        SqlServer: null
+        SqlServerPort: null
+        TableOwner: SIEBEL
+        UseAdapterUserName: null
+        UserName: SADMIN
+        UsernameAttributeType: null
+        hashAlgorithm: null
+        passwordAttributeType: null
+        saltAttributeType: null
+        secAdptDllName: null
+        sslDatabase: null
+        useSsl: 'false'
+        walletPassword: null
+      Profile:
+        LastUpdated: 2021/12/21 11:05:52
+        ProfileName: siebel_ent
+  parameters:
+  - basic_params:
+    - PA_ALIAS: MarketingFileSystem
+      PA_VALUE: /sfs0
+    - PA_ALIAS: CACertFileName
+      PA_VALUE: /siebel/mde/tls_certs/ca.cert.pem
+    - PA_ALIAS: CertFileName
+      PA_VALUE: /siebel/mde/tls_certs/server.pem
+    - PA_ALIAS: KeyFileName
+      PA_VALUE: /siebel/mde/tls_certs/server_key.pem
+    - PA_ALIAS: KeyFilePassword
+      PA_VALUE: siebel
+  - hidden_params: []
+  - advanced_params:
+    - PA_ALIAS: FileSystem
+      PA_VALUE: /sfs0
+    - PA_ALIAS: CFGSharedModeUsersDir
+      PA_VALUE: /sfs0/userpref

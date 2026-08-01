@@ -1,0 +1,18 @@
+{{- $files := .Files }}
+{{- $root := . -}}
+{{- range $key, $value := .Files }}
+{{- if hasPrefix "paramconfig/" $key }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $key | trimPrefix "paramconfig/"  | trimSuffix ".yaml" | replace "_" "-" }}
+  namespace: {{ $root.Release.Namespace }}
+  labels: {{- include "siebel.labels" $root | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-10"
+data:
+    {{ $key | trimPrefix "paramconfig/" }}: {{ $files.Get $key | quote }}
+{{- end }}
+{{- end }}
