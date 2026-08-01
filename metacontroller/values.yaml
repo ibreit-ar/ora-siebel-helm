@@ -92,4 +92,4 @@ service:
 #      protocol: "TCP"
 #      targetPort: "metrics"
 
-namespaceEnvid: siebel-jwc4l7
+namespaceEnvid: siebel-jbb175

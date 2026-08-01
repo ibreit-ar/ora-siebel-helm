@@ -65,7 +65,7 @@ securityContext:
   runAsUser: 1000
   fsGroup: 1000
 
-namespaceEnvid: siebel-jwc4l7
+namespaceEnvid: siebel-jbb175
 
 git:
   git_user: "git_user"
