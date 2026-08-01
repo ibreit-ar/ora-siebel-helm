@@ -1,3 +1,0 @@
-{{- range .Values.saiServer }}
-{{- include "deploy.saiprofiles" (list $ .) }}
-{{- end }}

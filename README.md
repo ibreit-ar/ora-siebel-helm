@@ -1,1 +1,0 @@
-# ora-siebel-helm
