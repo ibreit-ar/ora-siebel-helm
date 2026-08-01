@@ -1,0 +1,3 @@
+{{- range .Values.siebelServer }}
+{{- include "deploy.sesprofiles" (list $ .) }}
+{{- end }}

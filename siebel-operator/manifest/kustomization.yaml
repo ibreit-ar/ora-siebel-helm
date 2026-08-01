@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+commonLabels:
+  oracle.siebel.namespace-envid: 'siebel-jwc4l7'
+configMapGenerator:
+- files:
+  - sync.py
+  name: siebel-controller
+images:
+- name: siebel-operator-base
+  newName: iad.ocir.io/idvw9hrofahp/siebel_repo/cm/siebel-operator-base
+kind: Kustomization
+resources:
+- rbac.yaml
+- siebel-operator.yaml

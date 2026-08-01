@@ -1,0 +1,41 @@
+image:
+  siebel:
+    base_image: phx.ocir.io/siebeldev/cm/siebel:22.5
+    registry: phx.ocir.io
+    repository: siebeldev/cm/siebel
+    tag: 22.5.CUSTOM.0
+  customImageBuilder:
+    registry: phx.ocir.io
+    repository: siebeldev/cm/custom_image_builder
+    tag: CM_26.6.1
+  busybox:
+    registry: phx.ocir.io
+    repository: siebeldev/cm/base-builder
+    tag: CM_26.3.0
+    imagePullPolicy: Always
+git:
+  git_scm_flux_folder: flux-crm
+  git_helm_repo_branch: master
+  git_protocol_type: ssh
+  sshConfig:
+    hostname: abc.com
+    username: test
+    privateKeyPath: /home/opc/private_key.pem
+  flux_scm_repo_name: env_namespace
+  flux_scm_repo_namespace: env_namespace
+  flux_helm_repo_name: siebel-repo
+  flux_helm_repo_namespace: env_namespace
+
+  namespaceEnvid: siebel-jwc4l7
+
+enableFixMount: true
+
+serviceAccountName: "image-builder-sa"
+
+imageBuilder:
+  privileged: false
+
+securityContext:
+  runAsGroup: 1000
+  runAsUser: 1000
+  fsGroup: 1000
