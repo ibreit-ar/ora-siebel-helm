@@ -2,8 +2,8 @@ rbac:
   create: true
 
 image:
-  registry: phx.ocir.io
-  repository: siebeldev/cm/metacontroller
+  registry: iad.ocir.io
+  repository: idvw9hrofahp/siebel_repo/cm/metacontroller
   pullPolicy: Always
   tag: "v4.12.2"
 imagePullSecrets:

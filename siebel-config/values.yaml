@@ -4,23 +4,23 @@
 
 image:
   busybox:
-    registry: phx.ocir.io
-    repository: siebeldev/cm/base-builder
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/base-builder
     tag: CM_26.3.0
     imagePullPolicy: Always
   configure:
-    registry: phx.ocir.io
-    repository: siebeldev/cm/sieb-config
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/sieb-config
     tag: CM_26.6.0
     imagePullPolicy: Always
   dbutils:
-    registry: phx.ocir.io
-    repository: siebeldev/cm/dbutils
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/dbutils
     tag: CM_26.3.0
     imagePullPolicy: Always
   utils:
-    registry: phx.ocir.io
-    repository: siebeldev/cm/utils
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/utils
     tag: CM_26.3.0
     imagePullPolicy: Always
 
