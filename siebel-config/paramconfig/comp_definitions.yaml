@@ -9,6 +9,8 @@ component_definitions:
     parameters:
     parameters:
         - basic_params:
+            - PA_ALIAS: Lang
+              PA_VALUE: ESN
             - PA_ALIAS: AllowAnonUsers
               PA_VALUE: 'True'
             - PA_ALIAS: AppletSelectStyle
