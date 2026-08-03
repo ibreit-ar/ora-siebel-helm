@@ -78,6 +78,33 @@ sai_quantum:
         EAISOAPMaxRetry: 0
         EAISOAPNoSessInPref: false
         EnableExtServiceOnly: true
+        Language: esn
+        Name: eai
+        ObjectManager: EAIObjMgr_esn
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: true
         Language: enu
         Name: eai
         ObjectManager: EAIObjMgr_enu
@@ -135,6 +162,33 @@ sai_quantum:
         Language: enu
         Name: eEnergyOilGasChemicals
         ObjectManager: eEnergyOGCObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: esn
+        Name: ecommunications
+        ObjectManager: eCommunicationsObjMgr_esn
         StartCommand: ''
         UseAnonPool: false
       - AnonUserPool: 0

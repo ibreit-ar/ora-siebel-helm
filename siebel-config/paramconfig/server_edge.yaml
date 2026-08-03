@@ -15,7 +15,15 @@ server_edge:
             CC_ALIAS: eCommunicationsObjMgr_enu
             CC_RUNMODE: Interactive
             CG_ALIAS: Communications
-            CP_DISP_RUN_STATE: Not Online
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: AppObjMgr
+          parameters: []
+        eCommunicationsObjMgr_esn:
+          definition:
+            CC_ALIAS: eCommunicationsObjMgr_esn
+            CC_RUNMODE: Interactive
+            CG_ALIAS: Communications
+            CP_DISP_RUN_STATE: Online
             CT_ALIAS: AppObjMgr
           parameters: []
         eEnergyOGCObjMgr_enu:
@@ -63,6 +71,14 @@ server_edge:
         EAIObjMgr_enu:
           definition:
             CC_ALIAS: EAIObjMgr_enu
+            CC_RUNMODE: Interactive
+            CG_ALIAS: EAI
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: EAIObjMgr
+          parameters: []
+        EAIObjMgr_esn:
+          definition:
+            CC_ALIAS: EAIObjMgr_esn
             CC_RUNMODE: Interactive
             CG_ALIAS: EAI
             CP_DISP_RUN_STATE: Online
@@ -207,7 +223,7 @@ server_edge:
     DeploymentInfo:
       ProfileName: siebel
     ServerDeployParams:
-      DeployedLanguage: enu
+      DeployedLanguage: enu,esn
       PrimaryLanguage: enu
   parameters:
   - basic_params:
