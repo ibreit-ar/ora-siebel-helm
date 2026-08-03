@@ -290,7 +290,7 @@ sai_quantum:
         LogProperties:
           LogLevel: ERROR
         MaxConnections: 20
-        ObjectManager: eaiobjmgr_enu
+        ObjectManager: eaiobjmgr_esn
         RESTAuthenticationProperties:
           AnonPassword: Guest22__Aa
           AnonUserName: GUESTCST
