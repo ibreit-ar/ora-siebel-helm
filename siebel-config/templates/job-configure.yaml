@@ -1,0 +1,189 @@
+#Configure Siebel kubernetes yaml
+---
+apiVersion: batch/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Job
+metadata:
+  name: configure
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "siebel.labels" . | nindent 4 }}
+    app.kubernetes.io/component: configure-job
+  annotations:
+    ## This is what defines this resource as a hook. Without this line, the job is considered part of the release
+    "helm.sh/hook": post-install, pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      serviceAccountName: list-svc-sa
+      containers:
+        - image: {{ template "configure.image" . }}
+          name: configure-siebel
+          imagePullPolicy: {{ .Values.image.configure.imagePullPolicy | default "Always" }}
+          env:
+            - name: LogLevel
+              value: "INFO"
+            - name: LogLocation
+              value: /output/config_operator.log
+          volumeMounts:
+            - name: persist-storage
+              mountPath: /output
+              subPath: {{ .Release.Namespace | upper }}/CONFIG
+            {{- $files := .Files }}
+            {{- $root := . -}}
+            {{- range $key, $value := .Files }}
+            {{- if hasPrefix "paramconfig/" $key }}
+            - name: {{ $key | trimPrefix "paramconfig/"  | trimSuffix ".yaml" | replace "_" "-" }}
+              mountPath: /config/{{ $key | trimPrefix "paramconfig/" }}
+              subPath: {{ $key | trimPrefix "paramconfig/" }}
+            {{- end }}
+            {{- end }}
+            - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              name: kube-api-access
+              readOnly: true
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: 2Gi
+            requests:
+              cpu: "0.1"
+              memory: 500Mi
+      initContainers:
+        # check for enable_fix_mount from users
+        {{- if .Values.enableFixMount }}
+        - name: fix-mount
+          imagePullPolicy: {{ .Values.image.busybox.imagePullPolicy | default "Always" }}
+          image: {{ template "busybox.image" . }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Listing /work-dir:"
+              ls -lrt /work-dir
+              for i in $(seq 1 10); do
+                echo "Attempt $i: creating and fixing permissions on CONFIG directory..."
+                mkdir -p /work-dir/{{ .Release.Namespace | upper }}/CONFIG && \
+                echo "Directory setup succeeded." && break
+                echo "Attempt $i failed. Retrying in 5 seconds..."
+                sleep 5
+              done
+          volumeMounts:
+          - name: persist-storage
+            mountPath: "/work-dir"
+        {{- end }}
+        - name: wait4dbconn
+          imagePullPolicy: {{ .Values.image.dbutils.imagePullPolicy | default "Always" }}
+          image: {{ template "dbutils.image" . }}
+          env:
+            - name: TNS_ADMIN
+              value: "/tnsadmin"
+            - name: dbUser
+              valueFrom:
+                configMapKeyRef:
+                  name: siebel-common-config
+                  key: DBUSER
+            - name: dbPassword
+              valueFrom:
+                secretKeyRef:
+                  name: siebel-secrets
+                  key: DBUSERPASSWORD
+            - name: tnsConnectString
+              valueFrom:
+                configMapKeyRef:
+                  name: siebel-common-config
+                  key: DBTNSALIAS
+          volumeMounts:
+            - name: tns-admin
+              mountPath: /tnsadmin
+        - name: configcheck-smc
+          imagePullPolicy: {{ .Values.image.utils.imagePullPolicy | default "Always" }}
+          image: {{ template "utils.image" . }}
+          volumeMounts:
+          - name: keystore
+            mountPath: /tmp/keystore_client.jks
+            subPath: keystore_client.jks
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - >
+              PASSWORD=siebel;
+              JRE_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::");
+              ${JRE_HOME}/bin/keytool -importkeystore -srckeystore /tmp/keystore_client.jks  -destkeystore /tmp/siebelclientkeystore.p12 -srcstoretype JKS -deststoretype PKCS12 -deststorepass ${PASSWORD} -new ${PASSWORD} -srcstorepass ${PASSWORD};
+              echo \"Running Curl\";
+              depstatusCode=0;
+              while [ $depstatusCode -ne 200 ]; do
+                depstatusCode=$(curl -ks -o /dev/null -w '%{http_code}' --cert-type P12 --cert /tmp/siebelclientkeystore.p12:$PASSWORD https://smc-0.smc.{{ .Release.Namespace }}.svc.cluster.local:4430/siebel/smc/index.html);
+                echo \"depstatusCode = \" $depstatusCode;
+                sleep 10;
+              done
+        - name: configcheck-cgw
+          image: {{ template "utils.image" . }}
+          volumeMounts:
+          - name: keystore
+            mountPath: /tmp/keystore_client.jks
+            subPath: keystore_client.jks
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - >
+              PASSWORD=siebel;
+              JRE_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::");
+              ${JRE_HOME}/bin/keytool -importkeystore -srckeystore /tmp/keystore_client.jks  -destkeystore /tmp/siebelclientkeystore.p12 -srcstoretype JKS -deststoretype PKCS12 -deststorepass ${PASSWORD} -new ${PASSWORD} -srcstorepass ${PASSWORD};
+              echo \"Running Curl\";
+              i=0;
+              end={{ .Values.cgw.replicas | int }};
+               while [ "$i" -lt "$end" ]; do
+                depstatusCode=0;
+                while [[ $depstatusCode -ne 200 && $depstatusCode -ne 401 ]]; do
+                  depstatusCode=$(curl -ks -o /dev/null -w '%{http_code}'  --cert-type P12 --cert /tmp/siebelclientkeystore.p12:$PASSWORD https://siebelcgw-$i.siebel-cgw.{{ .Release.Namespace }}.svc.cluster.local:4430/siebel/v1.0/cloudgateway/heartbeat);
+                  echo \"depstatusCode = \" $depstatusCode;
+                  sleep 10;
+                done
+                i=$((i + 1))
+              done
+      restartPolicy: Never
+      {{- include "siebel.imagePullSecrets" . | nindent 6 }}
+      volumes:
+        - name: keystore
+          secret:
+            defaultMode: 420
+            secretName: keystore
+        - name: persist-storage
+          persistentVolumeClaim:
+            claimName: fsspvc-persist
+            readOnly: false
+        - name: tns-admin
+          secret:
+            secretName: tns-secret
+        {{- $files := .Files }}
+        {{- $root := . -}}
+        {{- range $key, $value := .Files }}
+        {{- if hasPrefix "paramconfig/" $key }}
+        - name: {{ $key | trimPrefix "paramconfig/"  | trimSuffix ".yaml" | replace "_" "-" }}
+          configMap:
+            name: {{ $key | trimPrefix "paramconfig/"  | trimSuffix ".yaml" | replace "_" "-" }}
+        {{- end }}
+        {{- end }}
+        - name: kube-api-access
+          projected:
+            defaultMode: 420
+            sources:
+              - serviceAccountToken:
+                  expirationSeconds: 3607
+                  path: token
+              - configMap:
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+                  name: kube-root-ca.crt
+              - downwardAPI:
+                  items:
+                    - fieldRef:
+                        apiVersion: v1
+                        fieldPath: metadata.namespace
+                      path: namespace

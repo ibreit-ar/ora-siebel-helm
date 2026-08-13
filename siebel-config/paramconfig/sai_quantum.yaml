@@ -1,0 +1,344 @@
+sai_quantum:
+  profiles:
+  - ConfigParam:
+      Applications:
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: dav
+        ObjectManager: EAIObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: CustAppSvcs
+        ObjectManager: CustomAppObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: true
+        Language: esn
+        Name: eai
+        ObjectManager: EAIObjMgr_esn
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: true
+        Language: enu
+        Name: eai
+        ObjectManager: EAIObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: webtools
+        ObjectManager: SWToolsObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: eEnergyOilGasChemicals
+        ObjectManager: eEnergyOGCObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: esn
+        Name: ecommunications
+        ObjectManager: eCommunicationsObjMgr_esn
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: ecommunications
+        ObjectManager: eCommunicationsObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: eCommunicationsWireless
+        ObjectManager: eCommWirelessObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: enu
+        Name: eenergy
+        ObjectManager: eEnergyObjMgr_enu
+        StartCommand: ''
+        UseAnonPool: false
+      ConnMgmt:
+        CACertFileName: ''
+        CertFileName: ''
+        KeyFileName: ''
+        KeyFilePassword: ''
+        PeerAuth: false
+        PeerCertValidation: false
+      DAV:
+        LogProperties:
+          LogLevel: ERROR
+      EAI:
+        LogProperties:
+          LogLevel: ERROR
+      RESTInBound:
+        Baseuri: https://smc-0.smc.siebel.svc.cluster.local:4430/siebel/v1.0/
+        LogProperties:
+          LogLevel: ERROR
+        MaxConnections: 20
+        ObjectManager: eaiobjmgr_esn
+        RESTAuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          AuthenticationType: Basic
+          ClientId: ''
+          ClientSecret: ''
+          OAuthEndPoint: ''
+          SessKeepAlive: 120
+          TrustToken: ''
+          UserSpec: ''
+          ValidateCertificate: true
+        RESTResourceParamList: []
+      RESTInBoundResource: []
+      RESTOutBound:
+        LogProperties:
+          LogLevel: ERROR
+      SOAPOutBound:
+        LogProperties:
+          LogLevel: ERROR
+      UI:
+        LogProperties:
+          LogLevel: ERROR
+      defaults:
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: ''
+          UserSpec: ''
+        DoCompression: false
+        EnableFQDN: false
+        FQDN: ''
+      swe:
+        AllowStats: true
+        Language: ENU
+        MaxQueryStringLength: -1
+        SeedFile: ''
+        SessionMonitor: false
+    Profile:
+      AccessPermission: ReadWrite
+      LastUpdated: 2021/12/21 11:14:54
+      ProfileName: ai_ecommunications_greenfield
+  replicas: 1

@@ -1,0 +1,65 @@
+gateway:
+  BootstrapCG:
+    bootstrapinfo:
+      PrimaryLanguage: ENU
+      registryPassword: sadmin
+      registryPort: '2320'
+      registryUserName: sadmin
+  CGinfo:
+    CGHostURI: siebelcgw-0.siebel-cgw.siebel.svc.cluster.local:4430
+    CGTlsPort: '8888'
+  GatewayClusterDeployment:
+    gateway_cluster_deployment_info:
+    - DeploymentInfo:
+        Action: Deploy
+        ProfileName: OEL_gatewaycluster_profile
+      GatewayClusterNodeRegistryList:
+      - IsPrimary: true
+        PhysicalHostIP: siebelcgw-0.siebel-cgw.siebel.svc.cluster.local:4430
+      - IsPrimary: false
+        PhysicalHostIP: siebelcgw-1.siebel-cgw.siebel.svc.cluster.local:4430
+      - IsPrimary: false
+        PhysicalHostIP: siebelcgw-2.siebel-cgw.siebel.svc.cluster.local:4430
+      GatewayClusterNodeServiceList:
+      - IsPrimary: true
+        PhysicalHostIP: siebelcgw-0.siebel-cgw.siebel.svc.cluster.local:4430
+      - IsPrimary: false
+        PhysicalHostIP: siebelcgw-1.siebel-cgw.siebel.svc.cluster.local:4430
+      - IsPrimary: false
+        PhysicalHostIP: siebelcgw-2.siebel-cgw.siebel.svc.cluster.local:4430
+  GatewayClusterProfiles:
+    profiles:
+    - GatewayClusterConfigParams:
+        ClientPort: '2320'
+        FollowerPort: '2328'
+        LeaderPort: '2329'
+      Profile:
+        LastUpdated: 2023/03/31 09:33:01
+        ProfileName: OEL_gatewaycluster_profile
+  SecurityProfiles:
+    profiles:
+    - Profile:
+        ProfileName: Gateway
+      SecurityConfigParams:
+        DBSecurityAdapterDataSource: Oracle
+        DBSecurityAdapterPropagateChange: false
+        DataSources:
+        - CRC: '0'
+          ConnectionString: SIEBEL
+          HashAlgorithm: SHA1
+          HashUserPwd: false
+          Name: Oracle
+          SharedDBPasswordSSO: ''
+          SharedDBUsernameSSO: ''
+          SingleSignOnSSO: false
+          SqlStyle: Oracle
+          TableOwner: SIEBEL
+          TrustTokenSSO: ''
+          Type: DB_Advanced
+          _prevType: ''
+        NSAdminRole:
+        - Siebel Administrator
+        SecAdptMode: DB_Advanced
+        SecAdptName: DBSecAdpt
+        TestUserName: SADMIN
+        TestUserPwd: Sadmin22__Aa
