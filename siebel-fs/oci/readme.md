@@ -1,1 +1,0 @@
-### To pass the ca.crt file for ociDeployment in ['oc3']

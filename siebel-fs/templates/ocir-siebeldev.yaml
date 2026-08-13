@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJpYWQub2Npci5pbyI6eyJ1c2VybmFtZSI6Imlkdnc5aHJvZmFocC9kZWZhdWx0L2lnbmFjaW8uYi5icmVpdEBvcmFjbGUuY29tIiwicGFzc3dvcmQiOiJwKWZCSVhMaHhKVTk3XHUwMDNlNDYrbjpIIiwiZW1haWwiOiJzaWViZWxAb3JhY2xlLmNvbSIsImF1dGgiOiJhV1IyZHpsb2NtOW1ZV2h3TDJSbFptRjFiSFF2YVdkdVlXTnBieTVpTG1KeVpXbDBRRzl5WVdOc1pTNWpiMjA2Y0NsbVFrbFlUR2g0U2xVNU56NDBOaXR1T2tnPSJ9fX0=
-kind: Secret
-metadata:
-  name: ocirsecret
-  namespace: siebel
-type: kubernetes.io/dockerconfigjson
