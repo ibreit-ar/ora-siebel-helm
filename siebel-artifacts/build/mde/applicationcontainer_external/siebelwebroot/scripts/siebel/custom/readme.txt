@@ -1,1 +1,0 @@
-Open UI siebel are stored in the "siebel" folder. Customers are advised not to store their siebel in the same folder in order to avoid the siebel being overwritten by Oracle in future upgrades. Please store your siebel in this folder ("siebel\custom") instead.

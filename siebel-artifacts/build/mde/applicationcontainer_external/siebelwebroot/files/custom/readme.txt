@@ -1,1 +1,0 @@
-Open UI files are stored in the "files" folder. Customers are advised not to store their files in the same folder in order to avoid the files being overwritten by Oracle in future upgrades. Please store your files in this folder ("files\custom") instead.

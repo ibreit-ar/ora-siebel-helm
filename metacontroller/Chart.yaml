@@ -1,9 +1,0 @@
-apiVersion: v2
-version: v4.12.2
-appVersion: v4.12.2
-kubeVersion: '^1.14.0-0'
-name: metacontroller
-description: Writing kubernetes controllers can be simple
-engine: gotpl
-type: application
-
