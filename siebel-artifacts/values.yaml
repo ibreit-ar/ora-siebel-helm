@@ -1,41 +1,36 @@
+enableFixMount: true
+git:
+  flux_helm_repo_name: siebel-repo
+  flux_helm_repo_namespace: env_namespace
+  flux_scm_repo_name: env_namespace
+  flux_scm_repo_namespace: env_namespace
+  git_helm_repo_branch: master
+  git_protocol_type: ssh
+  git_scm_flux_folder: flux-crm
+  namespaceEnvid: siebel-4mlxnp
+  sshConfig:
+    hostname: abc.com
+    privateKeyPath: /home/opc/private_key.pem
+    username: test
 image:
   busybox:
     imagePullPolicy: Always
     registry: iad.ocir.io
     repository: idvw9hrofahp/siebel_repo/cm/base-builder
-    tag: CM_26.3.0
+    tag: 26.6.CUSTOM.1 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
   customImageBuilder:
     registry: iad.ocir.io
     repository: idvw9hrofahp/siebel_repo/cm/custom_image_builder
-    tag: CM_26.6.1
+    tag: 26.6.CUSTOM.1 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
   siebel:
     base_image: iad.ocir.io/idvw9hrofahp/siebel_repo/cm/siebel:22.5
     registry: iad.ocir.io
     repository: idvw9hrofahp/siebel_repo/cm/siebel
-    tag: 22.5.CUSTOM.0
-git:
-  git_scm_flux_folder: flux-crm
-  git_helm_repo_branch: master
-  git_protocol_type: ssh
-  sshConfig:
-    hostname: abc.com
-    username: test
-    privateKeyPath: /home/opc/private_key.pem
-  flux_scm_repo_name: env_namespace
-  flux_scm_repo_namespace: env_namespace
-  flux_helm_repo_name: siebel-repo
-  flux_helm_repo_namespace: env_namespace
-
-  namespaceEnvid: siebel-4mlxnp
-
-enableFixMount: true
-
-serviceAccountName: "image-builder-sa"
-
+    tag: 26.6.CUSTOM.1 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
 imageBuilder:
   privileged: false
-
 securityContext:
+  fsGroup: 1000
   runAsGroup: 1000
   runAsUser: 1000
-  fsGroup: 1000
+serviceAccountName: image-builder-sa
