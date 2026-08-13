@@ -1,0 +1,391 @@
+# -------------------------------------------------------------
+# This is the service account used by the Coherence Operator.
+# -------------------------------------------------------------
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ default "coherence-operator" .Values.serviceAccountName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+---
+{{- if .Values.clusterRoles }}
+# -------------------------------------------------------------
+# This is the Cluster Roles required by the Coherence Operator
+# to self-manage its CRDs and Web-Hooks.
+# -------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: coherence-operator-crd-webhook-install
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+rules:
+  - apiGroups:
+    - apiextensions.k8s.io
+    resources:
+    - customresourcedefinitions
+    verbs:
+    - create
+    - delete
+    - get
+    - update
+  - apiGroups:
+    - admissionregistration.k8s.io
+    resources:
+    - mutatingwebhookconfigurations
+    - validatingwebhookconfigurations
+    verbs:
+    - create
+    - delete
+    - get
+    - update
+    - watch
+---
+# --------------------------------------------------------------------
+# This is the Cluster Role binding required by the Coherence Operator
+# to self-manage its CRDs and Web-Hooks.
+# --------------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: coherence-operator-crd-webhook-install
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: coherence-operator-crd-webhook-install
+subjects:
+- kind: ServiceAccount
+  name: {{ default "coherence-operator" .Values.serviceAccountName }}
+  namespace: {{ .Release.Namespace }}
+---
+{{- end }}
+{{- if or (eq .Values.clusterRoles true) (eq .Values.nodeRoles true) }}
+# -------------------------------------------------------------
+# This is the Cluster Roles required by the Coherence Operator
+# to obtain Node information.
+# Specifically the operator looks up Node labels to work out
+# the topology information used by Coherence for site safety.
+# -------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: coherence-operator-node-viewer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+---
+# ---------------------------------------------------------------------
+# This is the Cluster Roles binding required by the Coherence Operator
+# to obtain Node information.
+# Specifically the operator looks up Node labels to work out
+# the topology information used by Coherence for site safety.
+# ---------------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: coherence-operator-node-viewer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: coherence-operator-node-viewer
+subjects:
+- kind: ServiceAccount
+  name: {{ default "coherence-operator" .Values.serviceAccountName }}
+  namespace: {{ .Release.Namespace }}
+---
+{{- end }}
+# ---------------------------------------------------------------------
+# This is the Cluster Roles required by the Coherence Operator during
+# normal operation to manage Coherence clusters.
+# ---------------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+{{- if .Values.clusterRoles }}
+kind: ClusterRole
+{{- else }}
+kind: Role
+{{- end }}
+metadata:
+  name: coherence-operator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - events
+  - pods
+  - pods/exec
+  - secrets
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - coherence.oracle.com
+  resources:
+  - coherence
+  - coherence/finalizers
+  - coherence/status
+  - coherencejob
+  - coherencejob/finalizers
+  - coherencejob/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  - issuers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+# ---------------------------------------------------------------------
+# This is the Cluster Role binding required by the Coherence Operator
+# during normal operation to manage Coherence clusters.
+# ---------------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+{{- if .Values.clusterRoles }}
+kind: ClusterRoleBinding
+{{- else }}
+kind: RoleBinding
+{{- end }}
+metadata:
+  name: coherence-operator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+{{- if .Values.clusterRoles }}
+  kind: ClusterRole
+{{- else }}
+  kind: Role
+{{- end }}
+  name: coherence-operator
+subjects:
+- kind: ServiceAccount
+  name: {{ default "coherence-operator" .Values.serviceAccountName }}
+  namespace: {{ .Release.Namespace }}
+---
+# ---------------------------------------------------------------------
+# This is the Role required by the Coherence Operator
+# during normal operation to perform leader election.
+# ---------------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: leader-election-role
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+# ---------------------------------------------------------------------
+# This is the Role binding required by the Coherence Operator
+# during normal operation to perform leader election.
+# ---------------------------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: leader-election-rolebinding
+  labels:
+    control-plane: coherence
+    app.kubernetes.io/name: coherence-operator
+    app.kubernetes.io/version: "3.4.3"
+    app.kubernetes.io/part-of: coherence-operator
+{{- if (.Values.globalLabels) }}
+{{ toYaml .Values.globalLabels | indent 4 }}
+{{- end }}
+{{- if (.Values.globalAnnotations) }}
+  annotations:
+{{ toYaml .Values.globalAnnotations | indent 4 }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: leader-election-role
+subjects:
+  - kind: ServiceAccount
+    name: {{ default "coherence-operator" .Values.serviceAccountName }}
+    namespace: {{ .Release.Namespace }}
