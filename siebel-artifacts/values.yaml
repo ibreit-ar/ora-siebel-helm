@@ -26,7 +26,7 @@ git:
   flux_helm_repo_name: siebel-repo
   flux_helm_repo_namespace: env_namespace
 
-  namespaceEnvid: siebel-uyht6g
+  namespaceEnvid: siebel-4mlxnp
 
 enableFixMount: true
 
