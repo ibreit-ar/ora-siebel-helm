@@ -1,0 +1,102 @@
+coherence:
+  replicas: 3 # Number of Coherence server pod replicas to run. Controls cluster size and scalability.
+  clusterName: "siebelcache"  # Required: Name of the Coherence server cluster.
+  cacheConfigFile: "cache-server-config.xml" # Optional: Name of the cache config file. Place the file under the 'files/' directory in your chart. A dummy/empty template is provided there which you can customize.
+  overrideConfigFile: "tls-coherence-override.xml"
+  storageEnabled: true # Default is true when not specified [true, false]
+  logLevel: 9 # to set the log level(number between one and nine), where the higher the number the more debug logging is produced
+  tlsEnabled: "true"
+
+#Coherence server container image to be used for deployment.
+image:
+  registry: phx.ocir.io
+  registry_prefix: siebeldev
+  repository: "cm/coherence-ce"
+  tag: "25.03.2-custom2"
+  pullPolicy: Always
+  pullSecrets: ocirsecret
+
+service:
+  type: NodePort # Required: Service type for exposing the Coherence cluster. Can be 'NodePort' or 'LoadBalancer'.
+  ports:
+    - name: coherence-tcp
+      nodePort: 30065
+      port: 7575
+    - name: coherence-http
+      nodePort: 30066
+      port: 6676
+    - name: http-management
+      nodePort: 30067
+      port: 30000
+    - name: coherence-default-listen
+      nodePort: 30068
+      port: 7574
+    - name: coherence-extend
+      nodePort: 30069
+      port: 20000
+
+# Security Contexts
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+# Probes
+readinessProbe:
+  httpGet:
+    port: 6676
+    path: "/ready"
+    scheme: HTTP
+  timeoutSeconds: 60
+  initialDelaySeconds: 300
+  periodSeconds: 120
+  failureThreshold: 10
+  successThreshold: 1
+
+livenessProbe:
+  httpGet:
+    port: 6676
+    path: "/healthz"
+    scheme: HTTP
+  timeoutSeconds: 60
+  initialDelaySeconds: 300
+  periodSeconds: 120
+  failureThreshold: 10
+  successThreshold: 1
+
+# Affinity and anti-affinity
+affinity: {}
+
+env:
+  - name: COHERENCE_LOCALPORT
+    value: "7575"
+  - name: COHERENCE_LOCALPORT_ADJUST
+    value: "7576"
+
+siebelCerts:
+  siebel_server_keystore_password: siebel
+  siebel_truststore_password: siebel
+
+#JVM arguments
+#jvm:
+#  args:
+#    - -Dcoherence.socketprovider=ssl
+#    - -Dcoherence.extend.socketprovider=ssl
+#    - -Dcoherence.security.keystore=file:/config/coherence/certs/siebelkeystore.jks
+#    - -Dcoherence.pof.enabled=true
+#    - -Dcoherence.security.key.password=siebel
+#    - -Dcoherence.security.truststore=file:/config/coherence/certs/siebeltruststore.jks
+#    - -Dcoherence.security.truststore.password=siebel
+#    - -Dcoherence.security.algorithm=SunX509
+#  useContainerLimits: false # The JVM can be configured to respect container limits set
+
+secretVolumes:
+  - mountPath: /config/coherence/certs
+    name: coherence-siebel-certs
+    readOnly: true
+
+secrets:
+  password_key:
+  siebelkeystore:
+  siebeltruststore:
+  ocirsecret:

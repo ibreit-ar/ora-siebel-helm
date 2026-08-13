@@ -1,0 +1,94 @@
+apiVersion: coherence.oracle.com/v1
+kind: Coherence
+metadata:
+  name: {{ .Values.coherence.clusterName }}
+  namespace: {{ .Release.Namespace | default "default" }}
+spec:
+  image: {{ template "coherenceServer.image" . }}
+  imagePullPolicy: {{ .Values.image.pullPolicy | default "Always" }}
+  # Optional: Use image pull secrets if provided
+  {{- if .Values.image.pullSecrets }}
+  imagePullSecrets:
+    - name: {{ .Values.image.pullSecrets }}
+  {{- end }}
+  replicas: {{ .Values.coherence.replicas }}
+  cluster: {{ .Values.coherence.clusterName }}
+  coherence:
+    storageEnabled: {{ .Values.coherence.storageEnabled }}
+    logLevel:  {{ .Values.coherence.logLevel }}
+    {{- if .Values.coherence.cacheConfigFile }}
+    cacheConfig: /config/{{ .Values.coherence.cacheConfigFile }}
+    {{- end }}
+    {{- if .Values.coherence.overrideConfig }}
+    overrideConfig: /config/{{ .Values.coherence.overrideConfigFile }}
+    {{- end }}
+  configMapVolumes:
+  - mountPath: /config
+    name: coherence-cache-config
+
+
+  # Extra volumes/mounts
+  {{- if .Values.volumes }}
+  volumes:
+    {{- toYaml .Values.volumes | nindent 4 }}
+  {{- end }}
+  {{- if .Values.volumeMounts }}
+  volumeMounts:
+    {{- toYaml .Values.volumeMounts | nindent 4 }}
+  {{- end }}
+  #Environment variables
+  {{- if .Values.env }}
+  env:
+    {{- toYaml .Values.env | nindent 4 }}
+  {{- end }}
+  # JVM arguments
+  jvm:
+    args:
+      - -Dcoherence.wka={{ .Values.coherence.clusterName }}-wka.{{ .Release.Namespace | default "default" }}.svc
+      - -Dcoherence.cluster={{ .Values.coherence.clusterName }}
+      - -Dcoherence.security.keystore=file:/config/coherence/certs/siebelserverkeystore.jks
+      - -Dcoherence.pof.enabled=true
+      - -Dcoherence.security.key.password={{ .Values.siebelCerts.siebel_server_keystore_password }}
+      - -Dcoherence.security.password={{ .Values.siebelCerts.siebel_server_keystore_password }}
+      - -Dcoherence.security.truststore=file:/config/coherence/certs/siebeltruststore.jks
+      - -Dcoherence.security.truststore.password={{ .Values.siebelCerts.siebel_truststore_password }}
+      - -Dcoherence.security.algorithm=SunX509
+      - -Dcoherence.security.clientauth=none
+      {{- if eq .Values.coherence.tlsEnabled "true" }}
+      - -Dcoherence.socketprovider=ssl
+      - -Dcoherence.extend.socketprovider=ssl
+      {{- end }}
+  {{- if .Values.affinity }}
+
+  affinity:
+    {{- toYaml .Values.affinity | nindent 4 }}
+  {{- end }}
+
+  # Security context
+  {{- if .Values.securityContext }}
+  securityContext:
+    {{- toYaml .Values.securityContext | nindent 4 }}
+  {{- end }}
+
+  # Readiness Probe
+  {{- if .Values.readinessProbe }}
+  readinessProbe:
+    {{- toYaml .Values.readinessProbe | nindent 4 }}
+  {{- end }}
+
+  # Liveness Probe
+  {{- if .Values.livenessProbe }}
+  livenessProbe:
+    {{- toYaml .Values.livenessProbe | nindent 4 }}
+  {{- end }}
+
+  # Resource limits and requests
+  {{- if .Values.resources }}
+  resources:
+    {{- toYaml .Values.resources | nindent 4 }}
+  {{- end }}
+
+  {{- if .Values.secretVolumes }}
+  secretVolumes:
+    {{- toYaml .Values.secretVolumes | nindent 4 }}
+  {{- end }}

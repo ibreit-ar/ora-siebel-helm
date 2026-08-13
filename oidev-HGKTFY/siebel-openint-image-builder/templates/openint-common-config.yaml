@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openint-common-config
+  labels:
+    app: siebel-open-integration
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "1"
+data:
+  git.json: |
+    {{ .Values.gitConfig.gitJson | toJson | nindent 4 }}
