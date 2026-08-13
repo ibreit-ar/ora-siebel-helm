@@ -1,18 +1,18 @@
 image:
-  siebel:
-    base_image: phx.ocir.io/siebeldev/cm/siebel:22.5
-    registry: phx.ocir.io
-    repository: siebeldev/cm/siebel
-    tag: 22.5.CUSTOM.0
-  customImageBuilder:
-    registry: phx.ocir.io
-    repository: siebeldev/cm/custom_image_builder
-    tag: CM_26.6.1
   busybox:
-    registry: phx.ocir.io
-    repository: siebeldev/cm/base-builder
-    tag: CM_26.3.0
     imagePullPolicy: Always
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/base-builder
+    tag: CM_26.3.0
+  customImageBuilder:
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/custom_image_builder
+    tag: CM_26.6.1
+  siebel:
+    base_image: iad.ocir.io/idvw9hrofahp/siebel_repo/cm/siebel:22.5
+    registry: iad.ocir.io
+    repository: idvw9hrofahp/siebel_repo/cm/siebel
+    tag: 22.5.CUSTOM.0
 git:
   git_scm_flux_folder: flux-crm
   git_helm_repo_branch: master
