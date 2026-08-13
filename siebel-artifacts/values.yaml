@@ -7,7 +7,7 @@ git:
   git_helm_repo_branch: master
   git_protocol_type: ssh
   git_scm_flux_folder: flux-crm
-  namespaceEnvid: siebel-jbb175
+  namespaceEnvid: siebel-dkmbyb
   sshConfig:
     hostname: abc.com
     privateKeyPath: /home/opc/private_key.pem

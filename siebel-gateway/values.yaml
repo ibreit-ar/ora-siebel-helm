@@ -170,4 +170,4 @@ securityContext:
   runAsUser: 1000
   fsGroup: 1000
 
-namespaceEnvid: siebel-jbb175
+namespaceEnvid: siebel-dkmbyb
