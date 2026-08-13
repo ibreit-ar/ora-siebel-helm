@@ -12,7 +12,7 @@ blockVolumeConfig:
   vpusPerGb: 30
 envInfo:
   createBlockVolume: false
-  envId: JBB175
+  envId: 4MLXNP
   exportPath: /siebelfs
   mountTargetIp: 10.4.2.18
   namespace: SCM
