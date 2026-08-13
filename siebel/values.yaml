@@ -4,23 +4,23 @@
 
 image:
   siebel:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/siebel
+    registry: phx.ocir.io
+    repository: siebeldev/cm/siebel
     tag: "26.6-full"
     imagePullPolicy: IfNotPresent
   busybox:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/base-builder
+    registry: phx.ocir.io
+    repository: siebeldev/cm/base-builder
     tag: CM_26.3.0
     imagePullPolicy: Always
   dbutils:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/dbutils
+    registry: phx.ocir.io
+    repository: siebeldev/cm/dbutils
     tag: CM_26.3.0
     imagePullPolicy: Always
   utils:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/utils
+    registry: phx.ocir.io
+    repository: siebeldev/cm/utils
     tag: CM_26.3.0
     imagePullPolicy: Always
 
@@ -219,8 +219,8 @@ ldap:
 logging:
   enableLogging: false
   image:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/fluentd-collector
+    registry: phx.ocir.io
+    repository: siebeldev/cm/fluentd-collector
     tag: v1.18.0.2
     imagePullPolicy: Always
   aggregatorInfo:
@@ -262,6 +262,6 @@ securityContext:
   runAsUser: 1000
   fsGroup: 1000
 
-namespaceEnvid: siebel-dkmbyb
+namespaceEnvid: siebel-uyht6g
 
 enableFixMount: true

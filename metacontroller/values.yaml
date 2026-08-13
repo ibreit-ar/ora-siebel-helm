@@ -2,8 +2,8 @@ rbac:
   create: true
 
 image:
-  registry: iad.ocir.io
-  repository: idvw9hrofahp/siebel_repo/cm/metacontroller
+  registry: phx.ocir.io
+  repository: siebeldev/cm/metacontroller
   pullPolicy: Always
   tag: "v4.12.2"
 imagePullSecrets:
@@ -92,4 +92,4 @@ service:
 #      protocol: "TCP"
 #      targetPort: "metrics"
 
-namespaceEnvid: siebel-dkmbyb
+namespaceEnvid: siebel-uyht6g

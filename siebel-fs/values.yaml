@@ -29,7 +29,7 @@ image:
   tag: CM_26.6.0
 imagePullSecrets:
 - ocirsecret
-namespaceEnvid: siebel-dkmbyb
+namespaceEnvid: siebel-uyht6g
 persistentVolumeClaimConfig:
   accessModes:
   - ReadWriteOnce

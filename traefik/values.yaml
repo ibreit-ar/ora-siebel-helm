@@ -4,9 +4,9 @@
 
 image:  # @schema additionalProperties: false
   # -- Traefik image host registry
-  registry: iad.ocir.io
+  registry: phx.ocir.io
   # -- Traefik image repository
-  repository: idvw9hrofahp/siebel_repo/cm/traefik
+  repository: siebeldev/cm/traefik
   # -- defaults to appVersion. It's used for version checking, even prefixed with experimental- or latest-.
   # When a digest is required, `versionOverride` can be used to set the version.
   tag: v3.6.15

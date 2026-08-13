@@ -4,23 +4,23 @@
 
 image:
   busybox:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/base-builder
+    registry: phx.ocir.io
+    repository: siebeldev/cm/base-builder
     tag: CM_26.3.0
     imagePullPolicy: Always
   configure:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/sieb-config
+    registry: phx.ocir.io
+    repository: siebeldev/cm/sieb-config
     tag: CM_26.6.0
     imagePullPolicy: Always
   dbutils:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/dbutils
+    registry: phx.ocir.io
+    repository: siebeldev/cm/dbutils
     tag: CM_26.3.0
     imagePullPolicy: Always
   utils:
-    registry: iad.ocir.io
-    repository: idvw9hrofahp/siebel_repo/cm/utils
+    registry: phx.ocir.io
+    repository: siebeldev/cm/utils
     tag: CM_26.3.0
     imagePullPolicy: Always
 
@@ -65,7 +65,7 @@ securityContext:
   runAsUser: 1000
   fsGroup: 1000
 
-namespaceEnvid: siebel-dkmbyb
+namespaceEnvid: siebel-uyht6g
 
 git:
   git_user: "git_user"
