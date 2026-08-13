@@ -1,0 +1,95 @@
+# Siebel common config kubernetes yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postinstalldb
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "siebel.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+data:
+  postinstall.sh: |
+    #!/bin/bash
+    mkdir -p /persistent/siebsrvr
+    echo "MWHOME=" > /persistent/siebsrvr/siebenv.sh
+    echo "SIEBEL_ROOT=/siebel/mde/siebsrvr ; export SIEBEL_ROOT" >> /persistent/siebsrvr/siebenv.sh
+    echo "SIEBEL_HOME=/siebel/mde/siebsrvr ; export SIEBEL_HOME" >> /persistent/siebsrvr/siebenv.sh
+    echo "SIEBEL_LIB_DIR=/siebel/mde/siebsrvr/lib ; export SIEBEL_LIB_DIR" >> /persistent/siebsrvr/siebenv.sh
+    echo "SQLANY=\${SIEBEL_ROOT}/SYBSsa90 ; export SQLANY" >> /persistent/siebsrvr/siebenv.sh
+    echo "SIEBEL_LANGUAGE=enu ; export SIEBEL_LANGUAGE" >> /persistent/siebsrvr/siebenv.sh
+    echo "SBL_NATIVE_PATH=\${SIEBEL_ROOT}/sbln ; export SBL_NATIVE_PATH" >> /persistent/siebsrvr/siebenv.sh
+    echo "LANGUAGE=enu ; export LANGUAGE" >> /persistent/siebsrvr/siebenv.sh
+    echo "PATH=\${PATH}:\${SIEBEL_ROOT}/bin:\${SBL_NATIVE_PATH}/bin ; export PATH" >> /persistent/siebsrvr/siebenv.sh
+    echo "PATH=\${PATH}:\${SQLANY}/bin" >> /persistent/siebsrvr/siebenv.sh
+    echo "if [ a\${LD_LIBRARY_PATH} = \${LD_LIBRARY_PATH}a ]" >> /persistent/siebsrvr/siebenv.sh
+    echo "then LD_LIBRARY_PATH=\${SIEBEL_ROOT}/lib:\${SIEBEL_ROOT}/lib/odbc/merant:\${SQLANY}/lib:/usr/lib" >> /persistent/siebsrvr/siebenv.sh
+    echo "else LD_LIBRARY_PATH=\${SIEBEL_ROOT}/lib:\${SIEBEL_ROOT}/lib/odbc/merant:\${SQLANY}/lib:/usr/lib:\${LD_LIBRARY_PATH}" >> /persistent/siebsrvr/siebenv.sh
+    echo "fi" >> /persistent/siebsrvr/siebenv.sh
+    echo "export LD_LIBRARY_PATH" >> /persistent/siebsrvr/siebenv.sh
+    echo "LD_LIBRARY_PATH=\${SIEBEL_ROOT}/../oracledbclient:\${LD_LIBRARY_PATH} ; export LD_LIBRARY_PATH" >> /persistent/siebsrvr/siebenv.sh
+    echo "ulimit -s 8192; ulimit -Hs 8192" >> /persistent/siebsrvr/siebenv.sh
+    echo "ODBCSYSINI=\${SIEBEL_ROOT}/sys/ ; export ODBCSYSINI" >> /persistent/siebsrvr/siebenv.sh
+    echo "ODBCINI=\${SIEBEL_ROOT}/sys/.odbc.ini ; export ODBCINI" >> /persistent/siebsrvr/siebenv.sh
+    echo "SIEBEL_GATEWAY=siebel-cfg:8888; export SIEBEL_GATEWAY" >> /persistent/siebsrvr/siebenv.sh
+    echo "SIEBEL_UNIXUNICODE_DB=ORACLE; export SIEBEL_UNIXUNICODE_DB" >> /persistent/siebsrvr/siebenv.sh
+    echo "NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252; export NLS_LANG" >> /persistent/siebsrvr/siebenv.sh
+    echo "LANG=en_US.UTF-8; export LANG" >> /persistent/siebsrvr/siebenv.sh
+    mkdir -p /persistent/siebsrvr/sys
+    echo "[ODBC Data Sources]" > /persistent/siebsrvr/sys/.odbc.ini
+    echo "SIEBELDB=Oracle ODBC Driver" >> /persistent/siebsrvr/sys/.odbc.ini
+    echo " " >> /persistent/siebsrvr/sys/.odbc.ini
+    echo "[SIEBELDB]" >> /persistent/siebsrvr/sys/.odbc.ini
+    echo "Driver=OracleODBC" >> /persistent/siebsrvr/sys/.odbc.ini
+    echo "LobPrefetchSize=8388608" >> /persistent/siebsrvr/sys/.odbc.ini
+    echo "FetchBufferSize=1048576" >> /persistent/siebsrvr/sys/.odbc.ini
+    echo "ServerName=${TNS_CONNECT_STRING}" >> /persistent/siebsrvr/sys/.odbc.ini
+    echo "[DEFAULT]" > /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Description=ODBC for Oracle" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Driver=/siebel/mde/oracledbclient/libsqora.so.19.1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "FileUsage=1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "DontDLCLose=1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "UsageCount=" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo " " >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "[OracleODBC]" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Description=ODBC for Oracle" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Driver=/siebel/mde/oracledbclient/libsqora.so.19.1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Setup=" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "FileUsage=1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "UsageCount=" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "DontDLCLose=1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo " " >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "[DB2ODBC]" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Description=ODBC for DB2" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Driver=${DB2ODBCDriver}" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Setup=" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "FileUsage=1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "UsageCount=" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "DontDLCLose=1" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "[ODBC]" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Trace=No" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "TraceAutoStop=0" >> /persistent/siebsrvr/sys/odbcinst.ini
+    echo "Tracefile=odbctrace.log" >> /persistent/siebsrvr/sys/odbcinst.ini
+    source /siebel/mde/siebsrvr/siebenv.sh
+    TBLO=${TBLO^^}; export TBLO;
+    TBLOUSER=${TBLOUSER^^}; export TBLOUSER;
+    SIEBUSER=${SIEBUSER^^}; export SIEBUSER;
+    /bin/bash -x /config/PostInstallDBSetup.sh
+    status=$?
+    echo "Exit Status : $status"
+    if [ $status -eq 3 ]; then
+      echo "WSRanking - Failure, check logs" 
+    elif [ $status -eq 4 ]; then
+      echo "SeedSchema - Failure, check logs"
+    elif [ $status -eq 5 ]; then
+      echo "SeedSchema - Failure, check logs"
+    elif [ $status -eq 9 ]; then
+      echo "WFUpgrade - Failure, check logs"
+    elif [ $status -eq 11 ]; then
+      echo "WFUpgrade - Failure, check logs"
+    elif [ $status -eq 6 ]; then
+      echo "Validation - Failure, check logs"
+    else
+      exit 0
+    fi
+    exit 0

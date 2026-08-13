@@ -1,0 +1,41 @@
+{{- range $index, $val := .Values.storage }}
+#Persistent volume info for Siebel FS
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fsspv-siebel-{{ $.Release.Namespace }}-{{ $index }}
+  namespace: {{ $.Release.Namespace }}
+  labels: {{- include "siebel.labels" $ | nindent 4 }}
+spec:
+  storageClassName: {{ $val.storageClassName }}
+  # .capacity.storage is a mandatory field in the k8s, but not in oke. So provide a dummy/placeholder value.
+  # https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingpersistentvolumeclaim_Provisioning_PVCs_on_FSS.htm
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteMany
+  mountOptions:
+  - nosuid
+  nfs:
+    server: {{ $val.nfsServer | quote }}
+    path: {{ $val.nfsPath | quote }}
+    readOnly: false
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fsspvc-sfs-{{ $index }}
+  namespace: {{ $.Release.Namespace }}
+  labels: {{- include "siebel.labels" $ | nindent 4 }}
+spec:
+  storageClassName: {{ $val.storageClassName }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    # .capacity.storage is a mandatory field in the k8s, but not in oke. So provide a dummy/placeholder value.
+    # https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingpersistentvolumeclaim_Provisioning_PVCs_on_FSS.htm
+    requests:
+      storage: 10Gi
+  volumeName: fsspv-siebel-{{ $.Release.Namespace }}-{{$index}}
+{{- end -}}

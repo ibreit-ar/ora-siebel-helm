@@ -1,0 +1,15 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: cm-siebel-image-policy
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "siebel.labels" . | nindent 4 }}
+spec:
+  imageRepositoryRef:
+    name: cm-siebel-image
+  filterTags:
+    pattern: {{ template "tag.regex" . }}
+    extract: '$num'
+  policy:
+     numerical:
+      order: asc
