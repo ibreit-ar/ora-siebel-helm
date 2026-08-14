@@ -290,7 +290,7 @@ server_edge:
     - PA_ALIAS: NotifyHandler
       PA_VALUE: AdminEmailAlert
     - PA_ALIAS: Host
-      PA_VALUE: edge.siebel
+      PA_VALUE: edge-0.siebel
   - hidden_params: []
   - advanced_params: []
   profiles:
