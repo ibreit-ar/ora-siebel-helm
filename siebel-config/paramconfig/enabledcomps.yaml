@@ -22,3 +22,13 @@
 - SCBroker
 - MSMQRcvr
 - SMQReceiver
+- eCommunicationsObjMgr_esn
+- eCommunicationsObjMgrSSO_esn
+- EAIObjMgrSSO_esn
+- GenTrig
+- WorkActn
+- WorkMon
+- WorkMonSWI
+- WfProcBatchMgr
+- WfProcMgr
+- WfRecvMgr

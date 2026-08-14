@@ -34,6 +34,14 @@ server_edge:
             CP_DISP_RUN_STATE: Not Online
             CT_ALIAS: AppObjMgr
           parameters: []
+        eCommunicationsObjMgr_esn:
+          definition:
+            CC_ALIAS: eCommunicationsObjMgr_esn
+            CC_RUNMODE: Interactive
+            CG_ALIAS: Communications
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: AppObjMgr
+          parameters: []
     EAI:
       components:
         BusIntBatchMgr:
@@ -124,6 +132,14 @@ server_edge:
             CP_DISP_RUN_STATE: Online
             CT_ALIAS: EAIRcvr
           parameters: []
+        EAIObjMgr_esn:
+          definition:
+            CC_ALIAS: EAIObjMgr_esn
+            CC_RUNMODE: Interactive
+            CG_ALIAS: EAI
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: EAIObjMgr
+          parameters: []
     SiebelWebTools:
       components:
         SWToolsObjMgr_enu:
@@ -203,11 +219,69 @@ server_edge:
             CP_DISP_RUN_STATE: Running
             CT_ALIAS: BusSvcMgr
           parameters: []
+    Workflow:
+      components:
+        GenTrig:
+          definition:
+            CC_ALIAS: GenTrig
+            CC_RUNMODE: Batch
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: GenTrig
+          parameters: []
+        WorkActn:
+          definition:
+            CC_ALIAS: WorkActn
+            CC_RUNMODE: Background
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: WorkActn
+          parameters: []
+        WorkMon:
+          definition:
+            CC_ALIAS: WorkMon
+            CC_RUNMODE: Background
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: WorkMon
+          parameters: []
+        WorkMonSWI:
+          definition:
+            CC_ALIAS: WorkMonSWI
+            CC_RUNMODE: Background
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: WorkMon
+          parameters: []
+        WfProcBatchMgr:
+          definition:
+            CC_ALIAS: WfProcBatchMgr
+            CC_RUNMODE: Batch
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: Workflow Process Manager
+          parameters: []
+        WfProcMgr:
+          definition:
+            CC_ALIAS: WfProcMgr
+            CC_RUNMODE: Batch
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: Workflow Process Manager
+          parameters: []
+        WfRecvMgr:
+          definition:
+            CC_ALIAS: WfRecvMgr
+            CC_RUNMODE: Batch
+            CG_ALIAS: Workflow
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: Workflow Recovery Manager
+          parameters: []
   deployment:
     DeploymentInfo:
       ProfileName: siebel
     ServerDeployParams:
-      DeployedLanguage: enu
+      DeployedLanguage: enu,esn
       PrimaryLanguage: enu
   parameters:
   - basic_params:
@@ -228,7 +302,7 @@ server_edge:
       CertFileNameServer: null
       ClusteringEnvironmentSetup: NotClustered
       Db2InstHome: null
-      EnableCompGroupsSIA: Communications,EAI,SiebelWebTools
+      EnableCompGroupsSIA: Communications,EAI,SiebelWebTools,Workflow
       Encrypt: null
       LocalSynchMgrPort: '40400'
       ModifyServerAuth: null
