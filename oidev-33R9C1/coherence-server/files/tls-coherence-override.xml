@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<!-- Root element for Coherence operational configuration -->
+<coherence
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://xmlns.oracle.com/coherence/coherence-operational-config"
+xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-operational-config
+coherence-operational-config.xsd">
+
+<!-- Cluster configuration settings -->
+<cluster-config>
+    <member-identity>
+        <!-- Name of the Coherence cluster -->
+        <cluster-name system-property="coherence.cluster"></cluster-name>
+
+        <!-- Role assigned to this member (e.g., Server, Client) -->
+        <role-name system-property="coherence.role"></role-name>
+    </member-identity>
+
+   <unicast-listener>
+
+        <well-known-addresses>
+            <address system-property="coherence.wka"></address>
+        </well-known-addresses>
+
+   </unicast-listener>
+</cluster-config>
+
+</coherence>

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: coherence-server-helm
+description: A Helm chart for deploying Coherence Server
+version: 0.1.0
+appVersion: "26.6" 

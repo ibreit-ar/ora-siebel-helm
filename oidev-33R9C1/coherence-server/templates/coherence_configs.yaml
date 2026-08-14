@@ -1,0 +1,24 @@
+{{- if .Values.coherence.cacheConfigFile }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coherence-cache-config
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- $filename := printf "files/%s" .Values.coherence.cacheConfigFile }}
+  cache-server-config.xml: |-
+    {{ .Files.Get $filename | nindent 4 }}
+{{- end }}
+
+---
+{{- if .Values.coherence.overrideConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coherence-override-config
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- $filename := printf "files/%s" .Values.coherence.overrideConfig }}
+  tls-coherence-override.xml: |-
+    {{ .Files.Get $filename | nindent 4 }}
+{{- end }}
