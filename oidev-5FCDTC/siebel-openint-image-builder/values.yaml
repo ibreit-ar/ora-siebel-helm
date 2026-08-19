@@ -5,7 +5,7 @@ image:
     registry: phx.ocir.io
     registry_prefix: siebeldev
     repository: cm/siebel-openint-generator
-    tag: "CM_26.6.0"
+    tag: "CM_26.6.1"
     imagePullPolicy: Always
 
 imagePullSecrets:
