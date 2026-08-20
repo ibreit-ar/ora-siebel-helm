@@ -1,0 +1,63 @@
+image:
+  siebel_open_integration:
+    image_path: iad.ocir.io/siebeldev/cm/siebel_openint
+  siebel_openint_image_builder:
+    registry: iad.ocir.io
+    registry_prefix: siebeldev
+    repository: cm/siebel-openint-generator
+    tag: "CM_26.6.1"
+    imagePullPolicy: Always
+
+imagePullSecrets:
+  - ocirsecret
+  - customsecret
+
+resources:
+  limits:
+    cpu: "1"
+    memory: 8Gi
+  requests:
+    cpu: "0.5"
+    memory: 2Gi
+
+registry:
+  source:
+    registry_url: "iad.ocir.io"
+    registry_user: "siebeldev/samarth.bharadwaj.d.d@oracle.com"
+    registry_password: ""
+    registry_prefix: ""
+  target:
+    registry_url: "iad.ocir.io"
+    registry_user: "siebeldev/samarth.bharadwaj.d.d@oracle.com"
+    registry_password: ""
+
+siebelCerts:
+  siebel_server_keystore_file_name: siebelserverkeystore.jks
+  siebel_client_keystore_file_name: siebelclientkeystore.jks
+  siebel_truststore_file_name: siebeltruststore.jks
+
+coherence:
+  enable: true
+  wkaEndpoint: siebelcache.namespace
+  clusterName: siebelcache
+  tlsEnabled: true
+
+gitConfig:
+  gitJson:
+    gitUsername: ""
+    integrationConfigurationsDirectory: "openint"
+    remoteRepositoryUrl: ""
+    downloadSourceBranch: "main"
+
+gitSecrets:
+  secretName: siebel-openint-git-secrets
+  mountPath: /git-secrets
+  tokenKey: git_access_token
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+imageBuilder:
+  privileged: false

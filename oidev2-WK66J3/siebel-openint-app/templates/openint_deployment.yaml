@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siebel-open-integration
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/change-cause: "Upgrade at {{ now }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: siebel-open-integration
+  template:
+    metadata:
+      labels:
+        app: siebel-open-integration
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      containers:
+      - name: siebel-open-integration
+        image: {{ template "siebelOpenint.image" . }}
+        imagePullPolicy: {{ .Values.image.siebel_open_integration.imagePullPolicy }}
+        resources:
+          limits:
+            cpu: {{ .Values.resources.limits.cpu | default "1" }}
+            memory: {{ .Values.resources.limits.memory | default "8Gi" }}
+          requests:
+            cpu: {{ .Values.resources.requests.cpu | default "0.5" }}
+            memory: {{ .Values.resources.requests.memory | default "2Gi" }}
+        ports:
+          - containerPort: 8080
+        volumeMounts:
+          - name: siebel-certs
+            mountPath: /openintv2Installer/openint-deploy/target/{{ .Values.siebelCerts.siebel_server_keystore_file_name }}
+            subPath: siebelserverkeystore.jks
+          - name: siebel-certs
+            mountPath: /openintv2Installer/openint-deploy/target/{{ .Values.siebelCerts.siebel_client_keystore_file_name }}
+            subPath: siebelclientkeystore.jks
+          - name: siebel-certs
+            mountPath: /openintv2Installer/openint-deploy/target/{{ .Values.siebelCerts.siebel_truststore_file_name }}
+            subPath: siebeltruststore.jks
+        {{- if .Values.coherence.enable }}
+        env:
+          - name: COHERENCE_WKA
+            value: {{ .Values.coherence.clusterWKA }}
+          - name: COHERENCE_CLUSTER
+            value: {{ .Values.coherence.clusterName }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /observe/health
+            port: {{ .Values.service.port }}
+            scheme: HTTPS
+      {{- include "siebelOpenint.imagePullSecrets" . | nindent 6 }}
+      volumes:
+        - name: siebel-certs
+          secret:
+            secretName: {{ .Values.siebelCerts.secretName }}

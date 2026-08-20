@@ -1,0 +1,115 @@
+---
+apiVersion: batch/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Job
+metadata:
+  name: siebel-openint-image-builder-{{ .Release.Revision }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: siebel-openint-image-builder-job
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      annotations:
+        io.kubernetes.cri-o.Devices: /dev/fuse
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: 0
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      containers:
+        - name: siebel-openint-image-builder
+          image: {{ template "siebelOpenintImageBuilder.image" . }}
+          imagePullPolicy: {{ .Values.image.siebel_openint_image_builder.imagePullPolicy }}
+#          command: [ "/bin/bash", "-c", "--" ]
+#          args: [ "while true; do sleep 30; done;" ]
+          volumeMounts:
+            - name: openint-installer-volume
+              mountPath: /home/siebel/openintv2Installer
+            - name: common-config-volume
+              mountPath: /git.json
+              subPath: git.json
+            - name: git-secrets
+              mountPath: {{ .Values.gitSecrets.mountPath }}
+              readOnly: true
+            - name: siebel-certs
+              mountPath: /siebelserverkeystore.jks
+              subPath: siebelserverkeystore.jks
+            - name: siebel-certs
+              mountPath: /siebelclientkeystore.jks
+              subPath: siebelclientkeystore.jks
+            - name: siebel-certs
+              mountPath: /siebeltruststore.jks
+              subPath: siebeltruststore.jks
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: BASE_IMAGE
+              value: {{ printf "%s/%s/cm/siebel-operator-base:CM_26.3.0" .Values.registry.source.registry_url (default "" .Values.registry.source.registry_prefix) | replace "//" "/" }}
+            - name: WKA_ENDPOINT
+              value: {{ .Values.coherence.wkaEndpoint }}
+            - name: COHERENCE_CLUSTER
+              value: {{ .Values.coherence.clusterName }}
+            - name: COHERENCE_ENABLED
+              value: {{ .Values.coherence.enable | quote }}
+            - name: COHERENCE_TLS_ENABLED
+              value: {{ .Values.coherence.tlsEnabled | quote }}
+            - name: SOURCE_REGISTRY_URL
+              valueFrom:
+                 secretKeyRef:
+                   name: openint-common-secrets
+                   key: SOURCE_REGISTRY_URL
+            - name: SOURCE_REGISTRY_USER
+              valueFrom:
+                 secretKeyRef:
+                   name: openint-common-secrets
+                   key: SOURCE_REGISTRY_USER
+            - name: SOURCE_REGISTRY_PASSWORD
+              valueFrom:
+                 secretKeyRef:
+                   name: openint-common-secrets
+                   key: SOURCE_REGISTRY_PASSWORD
+            - name: TARGET_REGISTRY_URL
+              valueFrom:
+                 secretKeyRef:
+                   name: openint-common-secrets
+                   key: TARGET_REGISTRY_URL
+            - name: TARGET_REGISTRY_USER
+              valueFrom:
+                 secretKeyRef:
+                   name: openint-common-secrets
+                   key: TARGET_REGISTRY_USER
+            - name: TARGET_REGISTRY_PASSWORD
+              valueFrom:
+                 secretKeyRef:
+                   name: openint-common-secrets
+                   key: TARGET_REGISTRY_PASSWORD
+            - name: TAG_PATTERN
+              value: {{ template "tag.regex" . }}
+            - name: OPENINT_IMAGE_PATH
+              value: {{ .Values.image.siebel_open_integration.image_path }}
+            - name: SIEBEL_SERVER_KEYSTORE_NAME
+              value: {{ .Values.siebelCerts.siebel_server_keystore_file_name }}
+            - name: SIEBEL_CLIENT_KEYSTORE_NAME
+              value: {{ .Values.siebelCerts.siebel_client_keystore_file_name }}
+            - name: SIEBEL_TRUSTSTORE_NAME
+              value: {{ .Values.siebelCerts.siebel_truststore_file_name }}
+          securityContext:
+            privileged: {{ .Values.imageBuilder.privileged | default false }}
+            allowPrivilegeEscalation: true
+      restartPolicy: Never
+      {{- include "siebelOpenint.imagePullSecrets" . | nindent 6 }}
+      volumes:
+        - name: openint-installer-volume
+          emptyDir: {}
+        - name: common-config-volume
+          configMap:
+            name: openint-common-config
+        - name: git-secrets
+          secret:
+            secretName: {{ .Values.gitSecrets.secretName }}
+            optional: true
+            defaultMode: 0400
+        - name: siebel-certs
+          secret:
+            secretName: siebel-certs
