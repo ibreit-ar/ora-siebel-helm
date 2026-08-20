@@ -1,0 +1,223 @@
+# Copyright 2020, 2024, Oracle Corporation and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at
+# http://oss.oracle.com/licenses/upl.
+
+# image is the Coherence Operator image
+image:
+  registry: "iad.ocir.io"
+  registry_prefix: "siebeldev"
+  repository: "cm/coherence-operator"
+  tag: "3.4.3"
+
+# defaultCoherenceImage is the default application image that will be used if a Coherence
+# resource does not specify an image name.
+defaultCoherenceImage:
+  registry: "iad.ocir.io"
+  registry_prefix: "siebeldev"
+  repository: "cm/coherence-ce"
+  tag: "25.03.2-custom2"
+
+
+# watchNamespaces is the comma-delimited list of namespaces that the operator should
+# manage Coherence resources in. The default is to manage all namespaces.
+watchNamespaces: ""
+
+# imagePullPolicy controls the K8s container spec's pull policy
+# If not set the pull policy is "Always".
+imagePullPolicy:
+
+# replicas is the number of Operator replicas to run.
+# The operator runs HA by default, with one of the replicas assuming leadership.
+replicas: 3
+
+# imagePullSecrets provides support pulling images from private registries, the value references
+#   one or more secrets to be used when pulling images. Secrets must be manually created in the
+#   target namespace.
+#   ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+#
+#   For example, adding the pull secret "foo" would be:
+#
+#   imagePullSecrets:
+#   - name: "foo"
+#
+#   adding multiple pull secrets "foo" and "bar" would be
+#
+#   imagePullSecrets:
+#   - name: "foo"
+#   - name: "bar"
+imagePullSecrets: #Add additional secrets as required if accessing multiple registries, create them prior to helm install
+  - name: ocirsecret
+  - name: customsecret
+
+
+# ---------------------------------------------------------------------------
+# Additional labels that are added to the Operator Pods.
+labels:
+
+# ---------------------------------------------------------------------------
+# Additional annotations that are added to the Operator Pods.
+annotations:
+
+# ---------------------------------------------------------------------------
+# Additional labels that are added to the Operator Deployment.
+deploymentLabels:
+
+# ---------------------------------------------------------------------------
+# Additional annotations that are added to the Operator Deployment.
+deploymentAnnotations:
+
+# ---------------------------------------------------------------------------
+# Additional labels that are added to all te resources managed by  the Operator Deployment.
+globalLabels:
+
+# ---------------------------------------------------------------------------
+# Additional annotations that are added to all te resources managed by the Operator Deployment.
+globalAnnotations:
+
+# ---------------------------------------------------------------------------
+# Operator Pod securityContext
+# This sets the securityContext configuration for the Pod, for example
+# to run as a non-root user:
+#
+#  podSecurityContext:
+#    runAsNonRoot: true
+#    runAsUser: 1000
+#
+podSecurityContext:
+
+# ---------------------------------------------------------------------------
+# Operator container securityContext
+# This sets the securityContext configuration for the container, for example
+# to run as a non-root user:
+#
+#  securityContext:
+#    runAsNonRoot: true
+#    runAsUser: 1000
+#
+securityContext:
+
+# ---------------------------------------------------------------------------
+# Pod scheduling values
+
+# topologySpreadConstraints controls how Pods are spread across the cluster.
+# If not specified the default is to spread Pods over nodes using the topology.kubernetes.io/zone label.
+#   ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+topologySpreadConstraints:
+
+# affinity controls Pod scheduling preferences.
+#   ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity:
+
+# nodeSelector is the Node labels for pod assignment
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector:
+
+# tolerations is for nodes that have taints on them.
+#   Useful if you want to dedicate nodes to just run the coherence container
+#   For example:
+#   tolerations:
+#   - key: "key"
+#     operator: "Equal"
+#     value: "value"
+#     effect: "NoSchedule"
+#
+#   ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations:
+
+# webhookCertType sets how webhook certificates will be managed.
+# Valid values are "self-signed" "cert-manager" or "manual" the Operator will fail to start if
+# the value is invalid.
+# The default is "self-signed" where the operator will create self-signed certs for the webhook.
+# If set to "cert-manager" it is expected that cert-manager is installed and configured to
+# manage the certificates. https://cert-manager.io/docs/installation/kubernetes/
+# If set to "manual" the certificate Secret should be created and managed externally
+webhookCertType: self-signed
+
+# webhookCertSecret is the name of the Secret that will contain the certificates for the Coherence webhooks.
+webhookCertSecret: coherence-webhook-server-cert
+
+# siteLabel is the Kubernetes Node label used to set the site identity for Coherence Pods.
+siteLabel:
+
+# rackLabel is the Kubernetes Node label used to set the rack identity for Coherence Pods.
+rackLabel:
+
+# serviceAccountName is the name of the service account to create and assign RBAC roles to.
+# If not set the default name used is "coherence-operator".
+serviceAccountName: coherence-operator
+
+# The optional settings to adjust the readiness probe timings for the Operator
+readinessProbe:
+  # initialDelaySeconds is the number of seconds after the container has started before readiness probes are initiated.
+  # More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+  initialDelaySeconds: 10
+  # periodSeconds is how often (in seconds) to perform the probe.
+  # Default to 10 seconds. Minimum value is 1.
+  periodSeconds: 10
+  # failureThreshold is the minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # Defaults to 3. Minimum value is 1.
+  failureThreshold: 3
+
+# The optional settings to adjust the liveness probe timings for the Operator
+livenessProbe:
+  # initialDelaySeconds is the number of seconds after the container has started before liveness probes are initiated.
+  # More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+  initialDelaySeconds: 10
+  # periodSeconds is how often (in seconds) to perform the probe.
+  # Default to 10 seconds. Minimum value is 1.
+  periodSeconds: 10
+  # failureThreshold is the minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # Defaults to 3. Minimum value is 1.
+  failureThreshold: 3
+
+# resources will configure the Coherence Operator container's resource limits.
+# The resources can be specified in a values file, the same as they would be
+# for a container in a k8s Pod spec, for example:
+#
+#    resources:
+#      requests:
+#        memory: "64Mi"
+#        cpu: "250m"
+#      limits:
+#        memory: "128Mi"
+#        cpu: "500m"
+#
+# Or, alternatively they can be specified individually using the Helm install --set option, for example
+#
+# helm install --set resources.requests.memory="64Mi" \
+#     -- set resources.requests.cpu="250m"
+#     -- set resources.limits.memory="128Mi"
+#     -- set resources.limits.cpu="250m"
+#
+# ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+resources:
+
+# onlySameNamespace is a flag to indicate that the Operator should only monitor and control
+# Coherence clusters in the same namespace that it is installed into.
+# If this flag is set to true, any watchNamespaces value will be ignored, as this
+# will automatically be set to the same namespace the Operator is installed into.
+# The default is false, the Operator will monitor all namespaces
+onlySameNamespace: false
+
+# clusterRoles controls whether the Helm chart will create RBAC ClusterRole and bindings for the Operator
+# These are required if the Operator will watch multiple namespaces.
+# If set to false then the Operator will only watch the namespace it is deployed into.
+# If this value is false the Operator will not create CRDs, these MUST be manually installed.
+# The default is true.
+clusterRoles: true
+# nodeRoles controls whether the Helm chart will create RBAC ClusterRole and bindings for the Operator to
+# lookup cluster-wide Node information.
+# Setting this value clusterRoles and to false will mean that the Operator cannot look up Node labels that will be used
+# to set theCoherence site and rack values so Coherence cluster will be unable to automatically achieve site-safety.
+# The default is true.
+nodeRoles: false
+# webhooks controls whether the Coherence Operator registers admission web-hooks for the Coherence resource.
+# If this is set to false, then it will be possible to install invalid Coherence resource into the Kubernetes
+# cluster, that may cause errors when the Operator tries to reconcile them, or worse the Operator may create
+# other invalid Kubernetes resources that fail to run.
+webhooks: true
+
+# If set to false, the Operator will not support the CoherenceJob resource type.
+# The CoherenceJob CRD will not be installed by the Operator and the Operator will
+# not listen for any CoherenceJob resource events.
+allowCoherenceJobs: true
