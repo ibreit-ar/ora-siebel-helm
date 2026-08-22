@@ -17,9 +17,16 @@ siebelCerts:
   siebel_truststore_file_name: siebeltruststore.jks
 
 service:
-  type: NodePort
-  port: 8433
-  # nodePort: 30443  # Optional: Only used if type is NodePort
+  type: LoadBalancer
+  port: 443
+
+  annotations:
+    service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+    service.beta.kubernetes.io/oci-load-balancer-shape: flexible
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-ssl-ports: "443"
+    service.beta.kubernetes.io/oci-load-balancer-subnet1: ocid1.subnet.oc1.iad.aaaaaaaabgu3ccycjph5iq635bgc74sndkawsle5szth74tovm3gt5lposiq
 
 resources:
     limits:
