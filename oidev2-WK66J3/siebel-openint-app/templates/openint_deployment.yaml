@@ -54,10 +54,10 @@ spec:
             path: /observe/health
             port: {{ .Values.service.port }}
             scheme: HTTPS
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            timeoutSeconds: 60
-            failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 60
+          failureThreshold: 3
       {{- include "siebelOpenint.imagePullSecrets" . | nindent 6 }}
       volumes:
         - name: siebel-certs
