@@ -52,7 +52,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /observe/health
-            port: {{ .Values.service.port }}
+            port: {{ .Values.livenessProbe.port }}
             scheme: HTTPS
           initialDelaySeconds: 60
           periodSeconds: 10
