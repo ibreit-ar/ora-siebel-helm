@@ -19,6 +19,8 @@ siebelCerts:
 service:
   type: LoadBalancer
   port: 443
+  targetPort: 8433
+
 
   annotations:
     service.beta.kubernetes.io/oci-load-balancer-internal: "true"
@@ -37,6 +39,7 @@ resources:
       memory: 2Gi
 
 livenessProbe:
+  port: 8433
   initialDelaySeconds: 10
   periodSeconds: 10
   timeoutSeconds: 3
