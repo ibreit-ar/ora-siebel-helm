@@ -17,16 +17,16 @@ image:
     imagePullPolicy: Always
     registry: iad.ocir.io
     repository: idvw9hrofahp/siebel_repo/cm/base-builder
-    tag: 26.6.CUSTOM.1 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
+    tag: 26.6.CUSTOM.2 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
   customImageBuilder:
     registry: iad.ocir.io
     repository: idvw9hrofahp/siebel_repo/cm/custom_image_builder
-    tag: 26.6.CUSTOM.1 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
+    tag: 26.6.CUSTOM.2 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
   siebel:
     base_image: iad.ocir.io/idvw9hrofahp/siebel_repo/cm/siebel:22.5
     registry: iad.ocir.io
     repository: idvw9hrofahp/siebel_repo/cm/siebel
-    tag: 26.6.CUSTOM.1 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
+    tag: 26.6.CUSTOM.2 # {"$imagepolicy": "siebel:cm-siebel-image-policy:tag"}
 imageBuilder:
   privileged: false
 securityContext:
