@@ -1,0 +1,87 @@
+# Supply an immutable GHCR tag through the environment HelmRelease.
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+# The BFF has in-memory durable state. Keep one replica until shared state is
+# introduced and validated.
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+podAnnotations: {}
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+service:
+  type: ClusterIP
+  port: 443
+  targetPort: 4173
+  annotations: {}
+
+# This Secret must exist in the target namespace. Required keys are .env.local,
+# siebel.config.json, customer.config.json, and auth.config.json.
+runtime:
+  existingSecret: ""
+
+# The image keystore is used by default. Set existingSecret only for a
+# customer-supplied PKCS#12 keystore.
+keystore:
+  existingSecret: ""
+  key: keystore.p12
+  mountPath: /home/commsb2cui/app/keystore.p12
+
+persistence:
+  rbac:
+    enabled: false
+    existingClaim: ""
+    storageClassName: oci-bv
+    size: 50Gi
+    mountPath: /home/commsb2cui/app/.runtime/rbac
+    fsGroup: 1000
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+probes:
+  startup:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 24
+  liveness:
+    initialDelaySeconds: 0
+    periodSeconds: 15
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,15 @@
+{{- if and .Values.persistence.rbac.enabled (not .Values.persistence.rbac.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "comms-b2c-ui.fullname" . }}-rbac
+  labels:
+    {{- include "comms-b2c-ui.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ required "persistence.rbac.storageClassName is required when persistence.rbac.enabled is true" .Values.persistence.rbac.storageClassName | quote }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ required "persistence.rbac.size is required when persistence.rbac.enabled is true" .Values.persistence.rbac.size | quote }}
+{{- end }}

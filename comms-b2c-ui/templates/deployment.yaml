@@ -1,0 +1,179 @@
+{{- $runtimeSecret := required "runtime.existingSecret is required" .Values.runtime.existingSecret }}
+{{- $imageRepository := required "image.repository is required" .Values.image.repository }}
+{{- $imageTag := required "image.tag is required and must be immutable" .Values.image.tag }}
+{{- $generatedRbacPvcName := printf "%s-rbac" (include "comms-b2c-ui.fullname" .) }}
+{{- $rbacPvcName := default $generatedRbacPvcName .Values.persistence.rbac.existingClaim }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "comms-b2c-ui.fullname" . }}
+  labels:
+    {{- include "comms-b2c-ui.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "comms-b2c-ui.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        {{- include "comms-b2c-ui.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: {{ include "comms-b2c-ui.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.persistence.rbac.enabled }}
+        fsGroup: {{ .Values.persistence.rbac.fsGroup }}
+        fsGroupChangePolicy: OnRootMismatch
+      {{- end }}
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: comms-b2c-ui
+          image: "{{ $imageRepository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: SIEBEL_CONFIG_PATH
+              value: /home/commsb2cui/app/config/siebel.config.json
+            - name: CUSTOMER_CONFIG_PATH
+              value: /home/commsb2cui/app/config/customer.config.json
+            - name: KEYSTORE_PATH
+              value: {{ .Values.keystore.mountPath | quote }}
+            {{- if .Values.persistence.rbac.enabled }}
+            - name: AUTHORIZATION_VIEW_PAGE_MAPPING_FILE
+              value: {{ printf "%s/%s" .Values.persistence.rbac.mountPath "authorization-view-page-mappings.json" | quote }}
+            - name: AUTHORIZATION_NON_SIEBEL_ACCESS_MAPPING_FILE
+              value: {{ printf "%s/%s" .Values.persistence.rbac.mountPath "non-siebel-access-mappings.json" | quote }}
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: /api/bff/health
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: /api/bff/health
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/bff/ready
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /home/commsb2cui/app/.env.local
+              subPath: .env.local
+              readOnly: true
+            - name: runtime-config
+              mountPath: /home/commsb2cui/app/config/siebel.config.json
+              subPath: siebel.config.json
+              readOnly: true
+            - name: runtime-config
+              mountPath: /home/commsb2cui/app/config/customer.config.json
+              subPath: customer.config.json
+              readOnly: true
+            - name: runtime-config
+              mountPath: /home/commsb2cui/app/config/auth.config.json
+              subPath: auth.config.json
+              readOnly: true
+            {{- if .Values.keystore.existingSecret }}
+            - name: customer-keystore
+              mountPath: {{ .Values.keystore.mountPath | quote }}
+              subPath: {{ required "keystore.key is required when keystore.existingSecret is set" .Values.keystore.key | quote }}
+              readOnly: true
+            {{- end }}
+            {{- if .Values.persistence.rbac.enabled }}
+            - name: rbac-data
+              mountPath: {{ .Values.persistence.rbac.mountPath | quote }}
+            {{- end }}
+      {{- if .Values.persistence.rbac.enabled }}
+      initContainers:
+        - name: seed-rbac-data
+          image: "{{ $imageRepository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              for mapping_file in authorization-view-page-mappings.json non-siebel-access-mappings.json; do
+                target_file="{{ .Values.persistence.rbac.mountPath }}/${mapping_file}"
+                if [ ! -e "${target_file}" ]; then
+                  cp "/home/commsb2cui/app/apps/bff/data/rbac/${mapping_file}" "${target_file}"
+                fi
+              done
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - name: rbac-data
+              mountPath: {{ .Values.persistence.rbac.mountPath | quote }}
+      {{- end }}
+      volumes:
+        - name: runtime-config
+          secret:
+            secretName: {{ $runtimeSecret }}
+            items:
+              - key: .env.local
+                path: .env.local
+              - key: siebel.config.json
+                path: siebel.config.json
+              - key: customer.config.json
+                path: customer.config.json
+              - key: auth.config.json
+                path: auth.config.json
+        {{- if .Values.keystore.existingSecret }}
+        - name: customer-keystore
+          secret:
+            secretName: {{ .Values.keystore.existingSecret | quote }}
+            items:
+              - key: {{ required "keystore.key is required when keystore.existingSecret is set" .Values.keystore.key | quote }}
+                path: {{ required "keystore.key is required when keystore.existingSecret is set" .Values.keystore.key | quote }}
+        {{- end }}
+        {{- if .Values.persistence.rbac.enabled }}
+        - name: rbac-data
+          persistentVolumeClaim:
+            claimName: {{ $rbacPvcName }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
