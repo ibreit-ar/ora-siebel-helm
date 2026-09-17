@@ -1,0 +1,155 @@
+name: validate-delegated-helm-change
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-scope:
+    name: Validate delegated Helm change
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate delegated change scope
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.event.pull_request.head.sha }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          import sys
+
+          base = os.environ["BASE_REF"]
+          head = os.environ["HEAD_REF"]
+          author = os.environ["AUTHOR"]
+
+          allowed_author = "p-iabreit"
+          oi_chart = "oidev2-WK66J3/siebel-openint-image-builder/Chart.yaml"
+          artifacts_chart = "siebel-artifacts/Chart.yaml"
+          mde_prefix = "siebel-artifacts/build/mde/"
+
+          if author != allowed_author:
+              print(f"::error::PR author '{author}' is not authorized. Only @{allowed_author} may submit these changes.")
+              sys.exit(1)
+
+          changed = subprocess.run(
+              ["git", "diff", "--name-status", f"{base}...{head}"] if base != head else ["git", "diff", "--name-only", head],
+              capture_output=True, text=True, check=True,
+          ).stdout.splitlines()
+
+          if not changed:
+              print("::error::No file changes detected.")
+              sys.exit(1)
+
+          parsed = []
+          for line in changed:
+              if line.startswith(("A\t", "M\t", "D\t", "R\t", "C\t")):
+                  status = line[0]
+                  parts = line[2:].split("\t")
+                  path = parts[1] if status == "R" else parts[0]
+              else:
+                  status = "M"
+                  path = line
+              parsed.append((status, path))
+
+          print("Changed files:")
+          for status, path in parsed:
+              print(f"  {status} {path}")
+
+          oi_changed = [p for s, p in parsed if p == oi_chart]
+          oi_other = [p for s, p in parsed if p.startswith("oidev2-WK66J3/") and p != oi_chart]
+          artifacts_changed = [p for s, p in parsed if p == artifacts_chart]
+          mde_changed = [p for s, p in parsed if p.startswith(mde_prefix)]
+          other = [p for s, p in parsed if p not in (oi_chart, artifacts_chart) and not p.startswith(mde_prefix) and not p.startswith("oidev2-WK66J3/")]
+
+          def read_file(ref, path):
+              out = subprocess.run(["git", "show", f"{ref}:{path}"], capture_output=True, text=True)
+              return out.stdout if out.returncode == 0 else None
+
+          semver_re = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$")
+
+          def parse_semver(v):
+              m = semver_re.match(v.strip())
+              if not m:
+                  return None
+              return tuple(int(x) for x in m.group(1, 2, 3))
+
+          def chart_bump_is_valid(path, base_ref, head_ref):
+              base_content = read_file(base_ref, path)
+              head_content = read_file(head_ref, path)
+              if base_content is None or head_content is None:
+                  return False
+              base_match = re.search(r"^version:\s*(.+)$", base_content, re.M)
+              head_match = re.search(r"^version:\s*(.+)$", head_content, re.M)
+              if not base_match or not head_match:
+                  return False
+              base_version = parse_semver(base_match.group(1))
+              head_version = parse_semver(head_match.group(1))
+              if not base_version or not head_version:
+                  return False
+              return head_version > base_version
+
+          def chart_diff_only_version(path, base_ref, head_ref):
+              base_lines = read_file(base_ref, path).splitlines()
+              head_lines = read_file(head_ref, path).splitlines()
+              diff_lines = [
+                  line for line in subprocess.run(
+                      ["git", "diff", f"{base_ref}...{head_ref}", "--", path],
+                      capture_output=True, text=True, check=True,
+                  ).stdout.splitlines()
+              ]
+              changed_keys = set()
+              for line in diff_lines:
+                  if line.startswith("+") and not line.startswith("+++") or line.startswith("-") and not line.startswith("---"):
+                      m = re.match(r"^[+-]\s*([A-Za-z0-9_]+):", line)
+                      if m:
+                          changed_keys.add(m.group(1))
+              return changed_keys == {"version"}
+
+          ok = True
+
+          if oi_changed or oi_other:
+              if len(changed) != 1 or not oi_changed:
+                  print(f"::error::Open Integration PR must change exactly one file: {oi_chart}")
+                  ok = False
+              else:
+                  if oi_other:
+                      print(f"::error::Unexpected oidev2-WK66J3 changes: {oi_other}")
+                      ok = False
+                  if not chart_bump_is_valid(oi_chart, base, head):
+                      print(f"::error::{oi_chart} must increase the SemVer 'version' field.")
+                      ok = False
+                  if not chart_diff_only_version(oi_chart, base, head):
+                      print(f"::error::{oi_chart} may change only the 'version' field.")
+                      ok = False
+          elif artifacts_changed or mde_changed:
+              if not artifacts_changed:
+                  print(f"::error::Changes under {mde_prefix} require a bump of {artifacts_chart} in the same PR.")
+                  ok = False
+              if not chart_bump_is_valid(artifacts_chart, base, head):
+                  print(f"::error::{artifacts_chart} must increase the SemVer 'version' field.")
+                  ok = False
+              if other:
+                  print(f"::error::Not allowed outside artifacts scope: {other}")
+                  ok = False
+          else:
+              print(f"::error::No allowed change matches this PR.")
+              ok = False
+
+          if not ok:
+              sys.exit(1)
+
+          print("Validation passed: change is limited to the delegated scope.")
+          PY
