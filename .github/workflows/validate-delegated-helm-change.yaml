@@ -10,7 +10,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  validate-scope:
+  validate-delegated-helm-change:
     name: Validate delegated Helm change
     runs-on: ubuntu-latest
     steps:
