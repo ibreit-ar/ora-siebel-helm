@@ -19,6 +19,10 @@
             <cache-name>OpenintAtomic_*_CurrentTasks</cache-name>
             <scheme-name>oi-concurrent</scheme-name>
         </cache-mapping>
+        <cache-mapping>
+            <cache-name>OpenIntRest_*</cache-name>
+            <scheme-name>oi-distributed-sessions</scheme-name>
+        </cache-mapping>
     </caching-scheme-mapping>
     <!-- Defines different caching schemes -->
     <caching-schemes>
