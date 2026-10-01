@@ -209,6 +209,8 @@ component_definitions:
           PA_VALUE: '15'
         - PA_ALIAS: DfltTasks
           PA_VALUE: '1'
+        - PA_ALIAS: GroupName
+          PA_VALUE: 'TMF Account Events Policy Grp'
       - hidden_params: []
       - advanced_params: []
 component_groups: {}
