@@ -24,6 +24,8 @@ named_subsystem:
   DBSecAdptSSO:
     parameters:
       - basic_params:
+          - PA_ALIAS: SecAdptDllName
+            PA_VALUE: sscfsadb
           - PA_ALIAS: DBSecAdpt_SingleSignOn
             PA_VALUE: "TRUE"
           - PA_ALIAS: DBSecAdpt_TrustToken
