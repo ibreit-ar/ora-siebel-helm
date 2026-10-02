@@ -295,11 +295,11 @@ sai_quantum:
           AnonPassword: Guest22__Aa
           AnonUserName: GUESTCST
           AuthenticationType: Basic
-          ClientId: ''
-          ClientSecret: ''
-          OAuthEndPoint: ''
+          ClientId: '35dcb3008fff4eb093a28b6524e0e147'
+          ClientSecret: 'idcscs-c4c5c110-d472-4e63-93dc-b09b1effc7bc'
+          OAuthEndPoint: 'https://idcs-3d129057fdf94349a1161fbd8e0d03bc.identity.oraclecloud.com:443/oauth2/v1/introspect'
           SessKeepAlive: 120
-          TrustToken: ''
+          TrustToken: 'Guest22__Aa'
           UserSpec: ''
           ValidateCertificate: true
         RESTResourceParamList: []
