@@ -26,7 +26,7 @@ named_subsystem:
       NSS_ALIAS: DBSecAdptSSO
       NSS_DESC: DB Security Adapter SSO
       NSS_NAME: DB Security Adapter SSO
-      SS_ALIAS: DBSecAdpt
+      SS_ALIAS: InfraSecAdpt_DB
     url: https://smc-0.smc.siebel.svc.cluster.local:4430/siebel/v1.0/cloudgateway/enterprises/enterprise_name/namedsubsystems/DBSecAdptSSO
     parameters:
       - basic_params:
