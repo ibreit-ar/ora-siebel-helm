@@ -21,22 +21,22 @@ named_subsystem:
             PA_VALUE: "50"
           - PA_ALIAS: MaxTasks
             PA_VALUE: "100"
-  DBSecAdptSSO:
-    definition:
-      NSS_ALIAS: DBSecAdptSSO
-      NSS_DESC: DB Security Adapter SSO
-      NSS_NAME: DB Security Adapter SSO
-      SS_ALIAS: InfraSecAdpt_DB
-    url: https://smc-0.smc.siebel.svc.cluster.local:4430/siebel/v1.0/cloudgateway/enterprises/enterprise_name/namedsubsystems/DBSecAdptSSO
-    parameters:
-    - advanced_params:
-        - PA_ALIAS: DBSecAdpt_SecAdptDllName
-          PA_VALUE: sscfsadb
-        - PA_ALIAS: DBSecAdpt_SingleSignOn
-          PA_VALUE: "TRUE"
-        - PA_ALIAS: DBSecAdpt_TrustToken
-          PA_VALUE: "Guest22__Aa"
-        - PA_ALIAS: DBSecAdpt_SharedDBUsername
-          PA_VALUE: "SADMIN"
-        - PA_ALIAS: DBSecAdpt_SharedDBPassword
-          PA_VALUE: "Sadmin22__Aa"
+              #  DBSecAdptSSO:
+              #    definition:
+              #      NSS_ALIAS: DBSecAdptSSO
+              #      NSS_DESC: DB Security Adapter SSO
+              #      NSS_NAME: DB Security Adapter SSO
+              #      SS_ALIAS: InfraSecAdpt_DB
+              #    url: https://smc-0.smc.siebel.svc.cluster.local:4430/siebel/v1.0/cloudgateway/enterprises/enterprise_name/namedsubsystems/DBSecAdptSSO
+              #    parameters:
+              #    - advanced_params:
+              #        - PA_ALIAS: DBSecAdpt_SecAdptDllName
+              #          PA_VALUE: sscfsadb
+              #        - PA_ALIAS: DBSecAdpt_SingleSignOn
+              #          PA_VALUE: "TRUE"
+              #        - PA_ALIAS: DBSecAdpt_TrustToken
+              #          PA_VALUE: "Guest22__Aa"
+              #        - PA_ALIAS: DBSecAdpt_SharedDBUsername
+              #          PA_VALUE: "SADMIN"
+              #        - PA_ALIAS: DBSecAdpt_SharedDBPassword
+              #          PA_VALUE: "Sadmin22__Aa"
