@@ -301,7 +301,7 @@ sai_quantum:
           SessKeepAlive: 120
           TrustToken: 'Guest22__Aa'
           UserSpec: ''
-          ValidateCertificate: true
+          ValidateCertificate: false
         RESTResourceParamList: []
       RESTInBoundResource: []
       RESTOutBound:
