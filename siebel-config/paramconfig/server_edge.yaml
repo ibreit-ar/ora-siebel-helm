@@ -157,6 +157,10 @@ server_edge:
                 PA_VALUE: DB
               - PA_ALIAS: SecAdptName
                 PA_VALUE: DBSecAdptSSO
+              - PA_ALIAS: SecAdptMode
+                PA_VALUE: DBSSO
+              - PA_ALIAS: SecAdptName
+                PA_VALUE: DBSecAdptSSO
     SiebelWebTools:
       components:
         SWToolsObjMgr_enu:
