@@ -29,14 +29,14 @@ named_subsystem:
       SS_ALIAS: InfraSecAdpt_DB
     url: https://smc-0.smc.siebel.svc.cluster.local:4430/siebel/v1.0/cloudgateway/enterprises/enterprise_name/namedsubsystems/DBSecAdptSSO
     parameters:
-      - basic_params:
-          - PA_ALIAS: SecAdptDllName
-            PA_VALUE: sscfsadb
-          - PA_ALIAS: DBSecAdpt_SingleSignOn
-            PA_VALUE: "TRUE"
-          - PA_ALIAS: DBSecAdpt_TrustToken
-            PA_VALUE: "Guest22__Aa"
-          - PA_ALIAS: DBSecAdpt_SharedDBUsername
-            PA_VALUE: "SADMIN"
-          - PA_ALIAS: DBSecAdpt_SharedDBPassword
-            PA_VALUE: "Sadmin22__Aa"
+    - advanced_params:
+        - PA_ALIAS: DBSecAdpt_SecAdptDllName
+          PA_VALUE: sscfsadb
+        - PA_ALIAS: DBSecAdpt_SingleSignOn
+          PA_VALUE: "TRUE"
+        - PA_ALIAS: DBSecAdpt_TrustToken
+          PA_VALUE: "Guest22__Aa"
+        - PA_ALIAS: DBSecAdpt_SharedDBUsername
+          PA_VALUE: "SADMIN"
+        - PA_ALIAS: DBSecAdpt_SharedDBPassword
+          PA_VALUE: "Sadmin22__Aa"
