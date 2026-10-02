@@ -1,1 +1,34 @@
-named_subsystem: {}
+named_subsystem:
+  AutomationSubSys:
+    parameters:
+      - basic_params:
+          - PA_ALIAS: CONTAINERURL
+            PA_VALUE: http://localhost:4431/siebel/jbs
+  DBGSVC:
+    definition:
+      NSS_ALIAS: DBGSVC
+      NSS_DESC: Debugger Service primary host for siebel
+      NSS_NAME: Debugger Service
+      SS_ALIAS: DbgProcCfg
+    url: https://smc-0.smc.siebel.svc.cluster.local:4430/siebel/v1.0/cloudgateway/enterprises/enterprise_name/namedsubsystems/DBGSVC
+    parameters:
+      - basic_params:
+          - PA_ALIAS: Host
+            PA_VALUE: edge-0.edge.siebel.svc.cluster.local
+          - PA_ALIAS: Port
+            PA_VALUE: "10000"
+          - PA_ALIAS: TxnTimeout
+            PA_VALUE: "50"
+          - PA_ALIAS: MaxTasks
+            PA_VALUE: "100"
+  DBSecAdptSSO:
+    parameters:
+      - basic_params:
+          - PA_ALIAS: DBSecAdpt_SingleSignOn
+            PA_VALUE: "TRUE"
+          - PA_ALIAS: DBSecAdpt_TrustToken
+            PA_VALUE: "Guest22__Aa"
+          - PA_ALIAS: DBSecAdpt_SharedDBUsername
+            PA_VALUE: "SADMIN"
+          - PA_ALIAS: DBSecAdpt_SharedDBPassword
+            PA_VALUE: "Sadmin22__Aa"

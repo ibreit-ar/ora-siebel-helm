@@ -140,6 +140,23 @@ server_edge:
             CP_DISP_RUN_STATE: Online
             CT_ALIAS: EAIObjMgr
           parameters: []
+        EAIObjMgrSSO_esn:
+          definition:
+            CC_ALIAS: EAIObjMgrSSO_esn
+            CC_RUNMODE: Interactive
+            CG_ALIAS: EAI
+            CP_DISP_RUN_STATE: Online
+            CT_ALIAS: EAIObjMgr
+          parameters:
+            - basic_params:
+              - PA_ALIAS: Lang
+                PA_VALUE: ESN
+              - PA_ALIAS: LocaleCode
+                PA_VALUE: ESN
+              - PA_ALIAS: SecAdptMode
+                PA_VALUE: DB
+              - PA_ALIAS: SecAdptName
+                PA_VALUE: DBSecAdptSSO
     SiebelWebTools:
       components:
         SWToolsObjMgr_enu:
