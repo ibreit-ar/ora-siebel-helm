@@ -33,10 +33,10 @@ named_subsystem:
         - PA_ALIAS: DBSecAdpt_SecAdptDllName
           PA_VALUE: sscfsadb
         - PA_ALIAS: DBSecAdpt_SingleSignOn
-          PA_VALUE: "TRUE"
+          PA_VALUE: TRUE
         - PA_ALIAS: DBSecAdpt_TrustToken
-          PA_VALUE: "Guest22__Aa"
+          PA_VALUE: Guest22__Aa
         - PA_ALIAS: DBSecAdpt_SharedDBUsername
-          PA_VALUE: "SADMIN"
+          PA_VALUE: SADMIN
         - PA_ALIAS: DBSecAdpt_SharedDBPassword
-          PA_VALUE: "Sadmin22__Aa"
+          PA_VALUE: Sadmin22__Aa
