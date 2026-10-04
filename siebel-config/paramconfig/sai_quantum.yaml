@@ -272,6 +272,33 @@ sai_quantum:
         ObjectManager: eEnergyObjMgr_enu
         StartCommand: ''
         UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
+          SingleSignOn: false
+          TrustToken: 'Guest22__Aa'
+          UserSpec: ''
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: true
+        Language: esn
+        Name: eai
+        ObjectManager: EAIObjMgrSSO_esn
+        StartCommand: ''
+        UseAnonPool: false
       ConnMgmt:
         CACertFileName: ''
         CertFileName: ''
