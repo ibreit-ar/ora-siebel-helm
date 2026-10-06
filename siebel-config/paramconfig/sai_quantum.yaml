@@ -314,6 +314,33 @@ sai_quantum:
           SessionTimeoutWarning: 60
           SessionTokenMaxAge: 2880
           SessionTokenTimeout: 900
+          SingleSignOn: true
+          TrustToken: 'Guest22__Aa'
+          UserSpec: 'X-Auth-Request-User'
+        AvailableInSiebelMobile: false
+        EAISOAPMaxRetry: 0
+        EAISOAPNoSessInPref: false
+        EnableExtServiceOnly: false
+        Language: esn
+        Name: ecommunications_oidc
+        ObjectManager: eCommunicationsObjMgrSSO_esn
+        StartCommand: ''
+        UseAnonPool: false
+      - AnonUserPool: 0
+        AppDisplayName: ''
+        AppDisplayOrder: 0
+        AppIcon: ''
+        AuthenticationProperties:
+          AnonPassword: Guest22__Aa
+          AnonUserName: GUESTCST
+          GuestSessionTimeout: 300
+          MaxTabs: 1
+          SessionTimeout: 900
+          SessionTimeoutWLCommand: UpdatePrefMsg
+          SessionTimeoutWLMethod: HeartBeat
+          SessionTimeoutWarning: 60
+          SessionTokenMaxAge: 2880
+          SessionTokenTimeout: 900
           SingleSignOn: false
           TrustToken: 'Guest22__Aa'
           UserSpec: ''
