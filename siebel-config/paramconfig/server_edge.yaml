@@ -59,8 +59,6 @@ server_edge:
                 PA_VALUE: DBSecAdptSSO
               - PA_ALIAS: SecAdptMode
                 PA_VALUE: DBSSO
-              - PA_ALIAS: SecAdptName
-                PA_VALUE: DBSecAdptSSO
     EAI:
       components:
         BusIntBatchMgr:
@@ -172,8 +170,6 @@ server_edge:
                 PA_VALUE: ESN
               - PA_ALIAS: LocaleCode
                 PA_VALUE: ESN
-              - PA_ALIAS: SecAdptName
-                PA_VALUE: DBSecAdptSSO
               - PA_ALIAS: SecAdptMode
                 PA_VALUE: DBSSO
               - PA_ALIAS: SecAdptName
