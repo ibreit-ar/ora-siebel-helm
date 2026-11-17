@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   validate-delegated-helm-change:
-    name: Validate delegated Helm change
+    name: validate-delegated-helm-change
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,6 +24,9 @@ jobs:
           BASE_REF: ${{ github.event.pull_request.base.sha }}
           HEAD_REF: ${{ github.event.pull_request.head.sha }}
           AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          TARGET_REPO: ${{ github.repository }}
         run: |
           python3 - <<'PY'
           import os
@@ -40,8 +43,17 @@ jobs:
           artifacts_chart = "siebel-artifacts/Chart.yaml"
           mde_prefix = "siebel-artifacts/build/mde/"
 
-          if author != allowed_author:
-              print(f"::error::PR author '{author}' is not authorized. Only @{allowed_author} may submit these changes.")
+          is_automation = (
+              author == "github-actions[bot]"
+              and os.environ["HEAD_REPO"] == os.environ["TARGET_REPO"]
+              and re.fullmatch(
+                  r"automation/openint-lab-build-[0-9]+",
+                  os.environ["HEAD_BRANCH"]
+              ) is not None
+          )
+
+          if author != allowed_author and not is_automation:
+              print(f"::error::Unauthorized PR author: {author}")
               sys.exit(1)
 
           changed = subprocess.run(
@@ -102,23 +114,53 @@ jobs:
               return head_version > base_version
 
           def chart_diff_only_version(path, base_ref, head_ref):
-              base_lines = read_file(base_ref, path).splitlines()
-              head_lines = read_file(head_ref, path).splitlines()
-              diff_lines = [
-                  line for line in subprocess.run(
-                      ["git", "diff", f"{base_ref}...{head_ref}", "--", path],
-                      capture_output=True, text=True, check=True,
-                  ).stdout.splitlines()
-              ]
-              changed_keys = set()
-              for line in diff_lines:
-                  if line.startswith("+") and not line.startswith("+++") or line.startswith("-") and not line.startswith("---"):
-                      m = re.match(r"^[+-]\s*([A-Za-z0-9_]+):", line)
-                      if m:
-                          changed_keys.add(m.group(1))
-              return changed_keys == {"version"}
+              base_content = read_file(base_ref, path)
+              head_content = read_file(head_ref, path)
+
+              if base_content is None or head_content is None:
+                  return False
+
+              pattern = re.compile(
+                  r"(?m)^(version:[ \t]*)([0-9]+)\.([0-9]+)\.([0-9]+)([ \t]*)$"
+              )
+
+              base_matches = list(pattern.finditer(base_content))
+              head_matches = list(pattern.finditer(head_content))
+
+              if len(base_matches) != 1 or len(head_matches) != 1:
+                  return False
+
+              old = base_matches[0]
+              new = head_matches[0]
+
+              old_version = tuple(int(old.group(i)) for i in (2, 3, 4))
+              new_version = tuple(int(new.group(i)) for i in (2, 3, 4))
+
+              expected_version = (
+                  old_version[0],
+                  old_version[1],
+                  old_version[2] + 1
+              )
+
+              if new_version != expected_version:
+                  return False
+
+              expected = (
+                  base_content[:old.start(2)]
+                  + ".".join(map(str, expected_version))
+                  + base_content[old.end(4):]
+              )
+
+              return head_content == expected
 
           ok = True
+
+          if is_automation and (
+              len(parsed) != 1
+              or parsed[0] != ("M", oi_chart)
+          ):
+              print("::error::Automation may modify only the OpenIntegration Chart.yaml")
+              sys.exit(1)
 
           if oi_changed or oi_other:
               if len(changed) != 1 or not oi_changed:

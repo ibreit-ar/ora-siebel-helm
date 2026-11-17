@@ -1,0 +1,157 @@
+name: OpenIntegration LAB - Request Build
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+concurrency:
+  group: openint-lab-build
+  cancel-in-progress: false
+
+jobs:
+  request-build:
+    if: github.event.issue.title == '[build] openint-lab'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Authorize requester
+        env:
+          AUTHOR: ${{ github.event.issue.user.login }}
+          ALLOWED_USERS: ${{ vars.LAB_BUILD_USERS }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import sys
+
+          author = os.environ["AUTHOR"].lower()
+          allowed = {
+              user.strip().lower()
+              for user in os.environ["ALLOWED_USERS"].replace(",", " ").split()
+              if user.strip()
+          }
+
+          if not allowed or author not in allowed:
+              print(f"::error::Unauthorized build requester: {author}")
+              sys.exit(1)
+
+          print(f"Authorized requester: {author}")
+          PY
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Validate chart configuration
+        env:
+          CONFIGURED_CHART: ${{ vars.LAB_OPENINT_CHART }}
+        shell: bash
+        run: |
+          EXPECTED="oidev2-WK66J3/siebel-openint-image-builder/Chart.yaml"
+
+          test "$CONFIGURED_CHART" = "$EXPECTED" || {
+            echo "::error::Unexpected chart path"
+            exit 1
+          }
+
+          test -f "$EXPECTED"
+
+      - name: Check pending build requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh pr list \
+            --base main \
+            --state open \
+            --json headRefName \
+            --jq '.[].headRefName' |
+            grep -q '^automation/openint-lab-build-'; then
+            echo "::error::An OpenIntegration LAB build PR is already pending"
+            exit 1
+          fi
+
+      - name: Increment chart version
+        env:
+          CHART: ${{ vars.LAB_OPENINT_CHART }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          path = Path(os.environ["CHART"])
+          original = path.read_bytes()
+
+          pattern = rb"(?m)^(version:[ \t]*)([0-9]+)\.([0-9]+)\.([0-9]+)([ \t]*)$"
+          matches = list(re.finditer(pattern, original))
+
+          if len(matches) != 1:
+              raise SystemExit("Expected exactly one numeric SemVer version field")
+
+          match = matches[0]
+          major, minor, patch = (
+              int(match.group(i)) for i in (2, 3, 4)
+          )
+
+          updated = (
+              match.group(1)
+              + f"{major}.{minor}.{patch + 1}".encode()
+              + match.group(5)
+          )
+
+          result = (
+              original[:match.start()]
+              + updated
+              + original[match.end():]
+          )
+
+          path.write_bytes(result)
+          print(f"Chart version: {major}.{minor}.{patch} -> {major}.{minor}.{patch + 1}")
+          PY
+
+      - name: Validate exact diff
+        env:
+          CHART: ${{ vars.LAB_OPENINT_CHART }}
+        shell: bash
+        run: |
+          test "$(git diff --name-only | wc -l)" -eq 1
+          test "$(git diff --name-only)" = "$CHART"
+          git diff --check
+          git diff -- "$CHART"
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHART: ${{ vars.LAB_OPENINT_CHART }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        shell: bash
+        run: |
+          BRANCH="automation/openint-lab-build-${ISSUE_NUMBER}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git switch -c "$BRANCH"
+          git add -- "$CHART"
+          git commit -m "build(openint-lab): increment builder chart version"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "build(openint-lab): request #${ISSUE_NUMBER}" \
+            --body "Automated OpenIntegration LAB build request.
+
+          Closes #${ISSUE_NUMBER}
+
+          Scope: builder Chart.yaml version only.
+          Requires DevOps review and approval."
