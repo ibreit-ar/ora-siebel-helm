@@ -2,7 +2,7 @@
 * @ibreit-ar
 
 # Open Integration bump (solo oidev2-WK66J3)
-/oidev2-WK66J3/siebel-openint-image-builder/Chart.yaml @p-iabreit @ibreit-ar
+/oidev2-WK66J3/siebel-openint-image-builder/Chart.yaml @ibreit-ar
 
 # Siebel Artifacts: Chart.yaml y arbol MDE
 /siebel-artifacts/Chart.yaml @p-iabreit @ibreit-ar
