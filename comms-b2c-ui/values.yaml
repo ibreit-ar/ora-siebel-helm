@@ -85,3 +85,7 @@ probes:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+deployment:
+  strategy:
+    type: RollingUpdate

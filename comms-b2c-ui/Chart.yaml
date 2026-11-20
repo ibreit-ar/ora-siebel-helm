@@ -2,5 +2,5 @@ apiVersion: v2
 name: comms-b2c-ui
 description: Comms B2C UI runtime deployment chart.
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: "26.9.0.1.542"

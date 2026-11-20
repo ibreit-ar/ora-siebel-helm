@@ -15,10 +15,12 @@ spec:
     matchLabels:
       {{- include "comms-b2c-ui.selectorLabels" . | nindent 6 }}
   strategy:
-    type: RollingUpdate
+    type: {{ .Values.deployment.strategy.type | default "RollingUpdate" }}
+    {{- if eq (.Values.deployment.strategy.type | default "RollingUpdate") "RollingUpdate" }}
     rollingUpdate:
       maxUnavailable: 0
       maxSurge: 1
+    {{- end }}
   template:
     metadata:
       labels:
